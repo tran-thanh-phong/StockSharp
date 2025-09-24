@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(dotnet restore:*)",
+      "Bash(dotnet build)",
+      "Bash(timeout:*)",
+      "Bash(chmod:*)",
+      "Bash(find:*)",
+      "WebFetch(domain:help.ctrader.com)",
+      "WebSearch"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
