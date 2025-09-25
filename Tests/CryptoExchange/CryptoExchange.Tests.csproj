@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\common_target_tests.props" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Connectors\CryptoExchangeBase\CryptoExchangeBase.csproj" />
+    <ProjectReference Include="..\..\Connectors\BinanceSpot\BinanceSpot.csproj" />
+  </ItemGroup>
+</Project>
