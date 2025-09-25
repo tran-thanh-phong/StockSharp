@@ -58,11 +58,27 @@ Tests MUST be written before implementation code. Red-Green-Refactor cycle MUST 
 
 ## Performance Requirements
 
-### Latency Standards
+### Production Performance Standards (Target Architecture)
 Market data processing MUST complete within 1ms for critical path operations. Order execution latency MUST not exceed 5ms from signal to submission. Strategy calculations MUST complete within allocated time slots to avoid missing market opportunities. Memory allocation in hot paths MUST be minimized to reduce garbage collection pressure.
 
-### Throughput Requirements
 System MUST handle minimum 10,000 market data updates per second per connector. Historical data processing MUST achieve minimum 1GB/minute throughput. Strategy backtesting MUST process minimum 1 million bars per minute. Concurrent connector support MUST scale to 50+ simultaneous connections.
+
+### MVP Performance Exception (Temporary)
+**MVP Validation Phase**: For rapid development and market validation, the following relaxed performance targets are acceptable:
+- Market data processing: <50ms (vs 1ms production target)
+- Order execution: <100ms (vs 5ms production target)
+- Throughput: 1k+ updates/sec (vs 10k+ production target)
+
+**MVP Conditions**:
+- MUST be clearly documented as temporary performance levels
+- MUST include performance optimization roadmap with migration path to production standards
+- MUST NOT compromise correctness, reliability, or data integrity
+- MUST maintain all architectural principles (KISS, SOLID, DRY, message-based)
+
+**MVP to Production Migration**:
+- Phase 1: MVP implementation with acceptable performance for validation
+- Phase 2: Performance optimization to meet constitutional standards
+- Phase 3: High-frequency trading optimizations for institutional use
 
 ### Resource Constraints
 Memory usage MUST remain under 2GB for standard configurations. CPU usage MUST not exceed 80% average under normal load. Disk I/O MUST be optimized for SSD storage patterns. Network connections MUST implement proper connection pooling and retry logic.
@@ -84,4 +100,8 @@ Constitution violations MUST be justified with technical necessity and simpler a
 
 Amendment process requires consensus from core maintainers and impact analysis on existing extensions. Complexity increases must demonstrate proportional value addition. Use CLAUDE.md for runtime development guidance and established patterns.
 
-**Version**: 1.0.0 | **Ratified**: 2025-09-24 | **Last Amended**: 2025-09-24
+**Version**: 1.1.0 | **Ratified**: 2025-09-24 | **Last Amended**: 2025-09-25
+
+## Amendment History
+- **v1.1.0 (2025-09-25)**: Added MVP Performance Exception for rapid development and market validation with clear migration path to production standards
+- **v1.0.0 (2025-09-24)**: Initial constitution ratification

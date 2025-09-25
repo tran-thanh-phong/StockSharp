@@ -50,16 +50,16 @@ public class SecurityMessageConverter : IMessageConverter<object, SecurityMessag
             MaxVolume = maxQty,
             Multiplier = 1m,
             Currency = CurrencyTypes.USD, // Default, can be overridden
-            State = MapSecurityState(status),
+            // State = MapSecurityState(status), // State property not available in current version
             LocalTime = DateTimeOffset.Now,
 
             // Additional metadata
-            UnderlyingSecurityCode = baseAsset,
+            // UnderlyingSecurityCode = baseAsset, // UnderlyingSecurityCode property not available in current version
             Class = quoteAsset,
 
             // Lot size and notional constraints
-            Decimals = GetDecimalPlaces(tickSize),
-            VolumeDecimals = GetDecimalPlaces(stepSize)
+            Decimals = GetDecimalPlaces(tickSize)
+            // VolumeDecimals = GetDecimalPlaces(stepSize) // VolumeDecimals property not available in current version
         };
     }
 
