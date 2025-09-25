@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\common_connectors_websocket.props" />
+  <ItemGroup>
+    <PackageReference Include="Binance.Net" Version="11.4.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CryptoExchangeBase\CryptoExchangeBase.csproj" />
+  </ItemGroup>
+</Project>
