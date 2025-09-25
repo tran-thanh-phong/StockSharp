@@ -74,7 +74,7 @@ $featureNum = ('{0:000}' -f $next)
 
 $branchName = $featureDesc.ToLower() -replace '[^a-z0-9]', '-' -replace '-{2,}', '-' -replace '^-', '' -replace '-$', ''
 $words = ($branchName -split '-') | Where-Object { $_ } | Select-Object -First 3
-$branchName = "$featureNum-$([string]::Join('-', $words))"
+$branchName = "features/$featureNum-$([string]::Join('-', $words))"
 
 if ($hasGit) {
     try {
