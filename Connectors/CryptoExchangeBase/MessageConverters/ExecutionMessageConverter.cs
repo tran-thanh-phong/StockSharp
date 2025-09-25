@@ -138,10 +138,10 @@ public class ExecutionMessageConverter : IMessageConverter<object, ExecutionMess
         {
             "LIMIT" => OrderTypes.Limit,
             "MARKET" => OrderTypes.Market,
-            "STOP_LOSS" => OrderTypes.StopLoss,
-            "STOP_LOSS_LIMIT" => OrderTypes.StopLimit,
-            "TAKE_PROFIT" => OrderTypes.TakeProfit,
-            "TAKE_PROFIT_LIMIT" => OrderTypes.TakeProfitLimit,
+            // "STOP_LOSS" => OrderTypes.StopLoss, // Not available in current StockSharp version
+            // "STOP_LOSS_LIMIT" => OrderTypes.StopLimit, // Not available in current StockSharp version
+            // "TAKE_PROFIT" => OrderTypes.TakeProfit, // Not available in current StockSharp version
+            // "TAKE_PROFIT_LIMIT" => OrderTypes.TakeProfitLimit, // Not available in current StockSharp version
             _ => OrderTypes.Limit
         };
     }
