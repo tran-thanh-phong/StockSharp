@@ -81,27 +81,27 @@
 - [x] T038 Validate real-time account updates via BinanceSpot user data stream
 
 ### Connection & Error Handling
-- [ ] T039 Test BinanceSpot testnet connection and authentication
-- [ ] T040 Test BinanceSpot rate limit handling and backoff strategies
-- [ ] T041 Test BinanceSpot WebSocket reconnection logic
-- [ ] T042 Test BinanceSpot error mapping from Binance.Net to StockSharp ErrorMessage
+- [x] T039 Test BinanceSpot testnet connection and authentication
+- [x] T040 Test BinanceSpot rate limit handling and backoff strategies
+- [x] T041 Test BinanceSpot WebSocket reconnection logic
+- [x] T042 Test BinanceSpot error mapping from Binance.Net to StockSharp ErrorMessage
 
 ## Phase 3.6: Polish & Documentation
 
 ### Unit Tests [P]
-- [ ] T043 [P] Unit tests for message converters in `E:\Sources\github\tran-thanh-phong\StockSharp\Tests\CryptoExchange\MessageConverterTests.cs`
-- [ ] T044 [P] Unit tests for symbol mapping and validation in `E:\Sources\github\tran-thanh-phong\StockSharp\Tests\CryptoExchange\BinanceSymbolTests.cs`
-- [ ] T045 [P] Unit tests for error handling and rate limiting in `E:\Sources\github\tran-thanh-phong\StockSharp\Tests\CryptoExchange\BinanceErrorHandlingTests.cs`
+- [x] T043 [P] Unit tests for message converters in `E:\Sources\github\tran-thanh-phong\StockSharp\Tests\CryptoExchange\MessageConverterTests.cs`
+- [x] T044 [P] Unit tests for symbol mapping and validation in `E:\Sources\github\tran-thanh-phong\StockSharp\Tests\CryptoExchange\BinanceSymbolTests.cs`
+- [x] T045 [P] Unit tests for error handling and rate limiting in `E:\Sources\github\tran-thanh-phong\StockSharp\Tests\CryptoExchange\BinanceErrorHandlingTests.cs`
 
 ### Performance & Optimization
-- [ ] T046 Performance test: Market data processing latency (<50ms requirement)
-- [ ] T047 Performance test: Order execution roundtrip time (<100ms requirement)
-- [ ] T048 Memory usage validation (<2GB requirement under load)
+- [x] T046 Performance test: Market data processing latency (<50ms requirement)
+- [x] T047 Performance test: Order execution roundtrip time (<100ms requirement)
+- [x] T048 Memory usage validation (<2GB requirement under load)
 
 ### Documentation Updates [P]
-- [ ] T049 [P] Update `E:\Sources\github\tran-thanh-phong\StockSharp\Samples\Connectors\BinanceSpotSample.cs` with working example
-- [ ] T050 [P] Update quickstart guide with actual usage examples in `E:\Sources\github\tran-thanh-phong\StockSharp\specs\001-features-binance-connector\quickstart.md`
-- [ ] T051 [P] Create framework extension guide for adding new exchanges in `E:\Sources\github\tran-thanh-phong\StockSharp\Connectors\CryptoExchangeBase\README.md`
+- [x] T049 [P] Update `E:\Sources\github\tran-thanh-phong\StockSharp\Samples\Connectors\BinanceSpotSample.cs` with working example
+- [x] T050 [P] Update quickstart guide with actual usage examples in `E:\Sources\github\tran-thanh-phong\StockSharp\specs\001-features-binance-connector\quickstart.md`
+- [x] T051 [P] Create framework extension guide for adding new exchanges in `E:\Sources\github\tran-thanh-phong\StockSharp\Connectors\CryptoExchangeBase\README.md`
 
 ## Dependencies
 
