@@ -1,0 +1,215 @@
+﻿<Window x:Class="StockSharp.Samples.Foundation.TradingWorkstation.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="StockSharp Trading Workstation"
+        Height="900" Width="1400"
+        MinHeight="600" MinWidth="800"
+        WindowStartupLocation="CenterScreen"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top Menu Bar -->
+        <materialDesign:ColorZone Grid.Row="0" Mode="PrimaryMid" Padding="16">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <materialDesign:PackIcon Kind="ChartLine" Width="32" Height="32" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Text="StockSharp Trading Workstation"
+                               Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
+                               VerticalAlignment="Center"
+                               Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type materialDesign:ColorZone}}, Path=Foreground}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                    <Button Style="{DynamicResource MaterialDesignToolButton}"
+                            ToolTip="Settings"
+                            Margin="8,0"
+                            Click="SettingsClick">
+                        <materialDesign:PackIcon Kind="Settings" Width="24" Height="24"/>
+                    </Button>
+                    <Button Style="{DynamicResource MaterialDesignToolButton}"
+                            ToolTip="Help"
+                            Margin="8,0"
+                            Click="HelpClick">
+                        <materialDesign:PackIcon Kind="Help" Width="24" Height="24"/>
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+        </materialDesign:ColorZone>
+
+        <!-- Main Content Area with Tabs -->
+        <TabControl Grid.Row="1"
+                    Style="{DynamicResource MaterialDesignTabControl}"
+                    materialDesign:ColorZoneAssist.Mode="PrimaryMid"
+                    TabStripPlacement="Top">
+
+            <!-- Connectors Tab -->
+            <TabItem Header="Connectors">
+                <TabItem.HeaderTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Connection"
+                                                   Width="24" Height="24"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,8,0"/>
+                            <TextBlock Text="Connectors" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </TabItem.HeaderTemplate>
+                <Grid x:Name="ConnectorsTabContent" Margin="16">
+                    <!-- ConnectorsView will be loaded programmatically -->
+                    <TextBlock Text="Loading Connectors..." HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Style="{DynamicResource MaterialDesignBody1TextBlock}"/>
+                </Grid>
+            </TabItem>
+
+            <!-- Trading Tab (Placeholder) -->
+            <TabItem Header="Trading">
+                <TabItem.HeaderTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Finance"
+                                                   Width="24" Height="24"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,8,0"/>
+                            <TextBlock Text="Trading" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </TabItem.HeaderTemplate>
+                <Grid>
+                    <materialDesign:Card Margin="16" Padding="32">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="Finance"
+                                                   Width="64" Height="64"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,0,0,16"
+                                                   Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                            <TextBlock Text="Trading Interface"
+                                     Style="{DynamicResource MaterialDesignHeadline4TextBlock}"
+                                     HorizontalAlignment="Center"
+                                     Margin="0,0,0,8"
+                                     Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                            <TextBlock Text="Coming Soon - Configure connectors first"
+                                     Style="{DynamicResource MaterialDesignBody2TextBlock}"
+                                     HorizontalAlignment="Center"
+                                     Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </Grid>
+            </TabItem>
+
+            <!-- Portfolio Tab (Placeholder) -->
+            <TabItem Header="Portfolio">
+                <TabItem.HeaderTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Briefcase"
+                                                   Width="24" Height="24"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,8,0"/>
+                            <TextBlock Text="Portfolio" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </TabItem.HeaderTemplate>
+                <Grid>
+                    <materialDesign:Card Margin="16" Padding="32">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="Briefcase"
+                                                   Width="64" Height="64"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,0,0,16"
+                                                   Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                            <TextBlock Text="Portfolio Management"
+                                     Style="{DynamicResource MaterialDesignHeadline4TextBlock}"
+                                     HorizontalAlignment="Center"
+                                     Margin="0,0,0,8"
+                                     Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                            <TextBlock Text="Coming Soon - Portfolio tracking and analysis"
+                                     Style="{DynamicResource MaterialDesignBody2TextBlock}"
+                                     HorizontalAlignment="Center"
+                                     Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </Grid>
+            </TabItem>
+
+            <!-- Analytics Tab (Placeholder) -->
+            <TabItem Header="Analytics">
+                <TabItem.HeaderTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="ChartLine"
+                                                   Width="24" Height="24"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,8,0"/>
+                            <TextBlock Text="Analytics" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </TabItem.HeaderTemplate>
+                <Grid>
+                    <materialDesign:Card Margin="16" Padding="32">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="ChartLine"
+                                                   Width="64" Height="64"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,0,0,16"
+                                                   Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                            <TextBlock Text="Analytics &amp; Reports"
+                                     Style="{DynamicResource MaterialDesignHeadline4TextBlock}"
+                                     HorizontalAlignment="Center"
+                                     Margin="0,0,0,8"
+                                     Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                            <TextBlock Text="Coming Soon - Performance analytics and reporting"
+                                     Style="{DynamicResource MaterialDesignBody2TextBlock}"
+                                     HorizontalAlignment="Center"
+                                     Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <!-- Status Bar -->
+        <materialDesign:ColorZone Grid.Row="2" Mode="PrimaryDark" Padding="16,8">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <materialDesign:PackIcon Kind="Information"
+                                           Width="16" Height="16"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,8,0"/>
+                    <TextBlock x:Name="StatusText"
+                             Text="Ready"
+                             VerticalAlignment="Center"
+                             Style="{DynamicResource MaterialDesignCaptionTextBlock}"
+                             Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type materialDesign:ColorZone}}, Path=Foreground}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                    <TextBlock x:Name="ConnectionCountText"
+                             Text="Connections: 0"
+                             VerticalAlignment="Center"
+                             Margin="16,0,0,0"
+                             Style="{DynamicResource MaterialDesignCaptionTextBlock}"
+                             Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type materialDesign:ColorZone}}, Path=Foreground}"/>
+                    <Ellipse x:Name="StatusIndicator"
+                           Width="12" Height="12"
+                           Fill="Gray"
+                           Margin="16,0,0,0"
+                           VerticalAlignment="Center"/>
+                </StackPanel>
+            </DockPanel>
+        </materialDesign:ColorZone>
+    </Grid>
+</Window>
