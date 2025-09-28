@@ -14,6 +14,7 @@ using StockSharp.Algo;
 using StockSharp.Algo.Strategies;
 using StockSharp.Algo.Strategies.Quoting;
 using StockSharp.Xaml;
+using BasicStrategies;
 
 public partial class StrategiesWindow
 {
@@ -55,9 +56,9 @@ public partial class StrategiesWindow
 
 	private void QuotingClick(object sender, RoutedEventArgs e)
 	{
-		var quoting = new MarketQuotingStrategy();
+		var quoting = new SmaCrossStrategy(); //MarketQuotingStrategy
 
-		var wnd = new StrategyEditWindow
+        var wnd = new StrategyEditWindow
 		{
 			Strategy = quoting,
 		};
