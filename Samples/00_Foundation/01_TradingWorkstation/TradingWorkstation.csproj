@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\common_samples_netwindows.props" />
+  <Import Project="..\..\common_connectors.props" />
+
+  <PropertyGroup>
+    <AssemblyName>TradingWorkstation</AssemblyName>
+    <RootNamespace>StockSharp.Samples.Foundation.TradingWorkstation</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Core StockSharp packages -->
+    <PackageReference Include="StockSharp.Xaml" Version="$(StockSharpVer)" />
+    <PackageReference Include="StockSharp.Xaml.Charting" Version="$(StockSharpVer)" />
+
+    <!-- Additional UI libraries for Material Design -->
+    <PackageReference Include="MaterialDesignThemes" Version="4.9.0" />
+    <PackageReference Include="MaterialDesignColors" Version="2.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Algo\Algo.csproj" />
+    <ProjectReference Include="..\..\..\Customization\Strategies\BasicStrategies\BasicStrategies.csproj" />
+  </ItemGroup>
+</Project>
