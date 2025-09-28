@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\..\common_target_tests.props" />
+
+  <PropertyGroup>
+    <AssemblyName>Tests.Connectors.CTrader</AssemblyName>
+    <RootNamespace>StockSharp.CTrader.Tests</RootNamespace>
+    <Description>Tests for StockSharp cTrader connector</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Connectors\CTrader\CTrader.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="cTrader.OpenAPI.Net" Version="1.4.4" />
+  </ItemGroup>
+</Project>
