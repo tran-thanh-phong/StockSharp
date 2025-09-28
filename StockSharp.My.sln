@@ -151,6 +151,54 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicStrategies", "Customization\Strategies\BasicStrategies\BasicStrategies.csproj", "{501EC05D-5971-4657-A08D-714521FDE9AE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Connectors", "Connectors", "{03641B31-54DD-4ED8-8FCB-DD256215F8DD}"
+	ProjectSection(SolutionItems) = preProject
+		Customization\Connectors\CTrader\CTrader.csproj = Customization\Connectors\CTrader\CTrader.csproj
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Algo.dll = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Algo.dll
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Algo.pdb = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Algo.pdb
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Algo.xml = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Algo.xml
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.BusinessEntities.dll = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.BusinessEntities.dll
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.BusinessEntities.pdb = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.BusinessEntities.pdb
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.BusinessEntities.xml = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.BusinessEntities.xml
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Charting.Interfaces.dll = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Charting.Interfaces.dll
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Charting.Interfaces.pdb = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Charting.Interfaces.pdb
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Charting.Interfaces.xml = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Charting.Interfaces.xml
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Configuration.dll = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Configuration.dll
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Configuration.pdb = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Configuration.pdb
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Configuration.xml = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Configuration.xml
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.CTrader.deps.json = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.CTrader.deps.json
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.CTrader.dll = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.CTrader.dll
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.CTrader.pdb = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.CTrader.pdb
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.CTrader.xml = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.CTrader.xml
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Localization.dll = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Localization.dll
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Localization.pdb = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Localization.pdb
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Localization.xml = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Localization.xml
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Media.Names.dll = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Media.Names.dll
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Media.Names.pdb = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Media.Names.pdb
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Media.Names.xml = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Media.Names.xml
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Messages.dll = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Messages.dll
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Messages.pdb = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Messages.pdb
+		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Messages.xml = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Messages.xml
+		Customization\Connectors\CTrader\CTraderMessageAdapter.cs = Customization\Connectors\CTrader\CTraderMessageAdapter.cs
+		Customization\Connectors\CTrader\obj\CTrader.csproj.nuget.dgspec.json = Customization\Connectors\CTrader\obj\CTrader.csproj.nuget.dgspec.json
+		Customization\Connectors\CTrader\obj\CTrader.csproj.nuget.g.props = Customization\Connectors\CTrader\obj\CTrader.csproj.nuget.g.props
+		Customization\Connectors\CTrader\obj\CTrader.csproj.nuget.g.targets = Customization\Connectors\CTrader\obj\CTrader.csproj.nuget.g.targets
+		Customization\Connectors\CTrader\obj\Debug\net6.0\.NETCoreApp,Version=v6.0.AssemblyAttributes.cs = Customization\Connectors\CTrader\obj\Debug\net6.0\.NETCoreApp,Version=v6.0.AssemblyAttributes.cs
+		Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.assets.cache = Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.assets.cache
+		Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.csproj.AssemblyReference.cache = Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.csproj.AssemblyReference.cache
+		Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.csproj.CoreCompileInputs.cache = Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.csproj.CoreCompileInputs.cache
+		Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.csproj.FileListAbsolute.txt = Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.csproj.FileListAbsolute.txt
+		Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.csproj.Up2Date = Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.csproj.Up2Date
+		Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.GeneratedMSBuildEditorConfig.editorconfig = Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.GeneratedMSBuildEditorConfig.editorconfig
+		Customization\Connectors\CTrader\obj\Debug\net6.0\ref\StockSharp.CTrader.dll = Customization\Connectors\CTrader\obj\Debug\net6.0\ref\StockSharp.CTrader.dll
+		Customization\Connectors\CTrader\obj\Debug\net6.0\refint\StockSharp.CTrader.dll = Customization\Connectors\CTrader\obj\Debug\net6.0\refint\StockSharp.CTrader.dll
+		Customization\Connectors\CTrader\obj\Debug\net6.0\StockSharp.CTrader.dll = Customization\Connectors\CTrader\obj\Debug\net6.0\StockSharp.CTrader.dll
+		Customization\Connectors\CTrader\obj\Debug\net6.0\StockSharp.CTrader.pdb = Customization\Connectors\CTrader\obj\Debug\net6.0\StockSharp.CTrader.pdb
+		Customization\Connectors\CTrader\obj\Debug\net6.0\StockSharp.CTrader.xml = Customization\Connectors\CTrader\obj\Debug\net6.0\StockSharp.CTrader.xml
+		Customization\Connectors\CTrader\obj\project.assets.json = Customization\Connectors\CTrader\obj\project.assets.json
+		Customization\Connectors\CTrader\obj\project.nuget.cache = Customization\Connectors\CTrader\obj\project.nuget.cache
+		Customization\Connectors\CTrader\Properties\AssemblyInfo.cs = Customization\Connectors\CTrader\Properties\AssemblyInfo.cs
+		Customization\Connectors\CTrader\Properties\usings.cs = Customization\Connectors\CTrader\Properties\usings.cs
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Indicators", "Indicators", "{2FF5822A-D1BC-436D-95EA-260995317890}"
 EndProject
