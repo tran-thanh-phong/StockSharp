@@ -1,0 +1,306 @@
+namespace StockSharp.CTraderConnector.Native;
+
+using System.Reactive.Linq;
+using OpenAPI.Net;
+using OpenAPI.Net.Helpers;
+using Google.Protobuf;
+
+/// <summary>
+/// cTrader OpenAPI client wrapper for StockSharp integration.
+/// </summary>
+class CTraderClient : BaseLogReceiver
+{
+	private readonly string _applicationId;
+	private readonly string _applicationSecret;
+	private readonly string _host;
+	private readonly int _port;
+
+	private OpenClient _client;
+	private bool _isAuthenticated;
+	private TaskCompletionSource<ProtoOASymbolsListRes> _symbolsTaskSource;
+
+	public event Action<ConnectionStates> StateChanged;
+	public event Action<Exception> Error;
+
+	// Market data events
+	public event Action<ProtoOASpotEvent> NewSpot;
+	public event Action<ProtoOADepthEvent> NewDepth;
+	public event Action<ProtoOAGetTrendbarsRes> NewCandle;
+
+	// Transaction events
+	public event Action<ProtoOAExecutionEvent> ExecutionEvent;
+	public event Action<ProtoOAOrderErrorEvent> OrderError;
+
+	// Account events
+	public event Action<ProtoOAGetAccountListByAccessTokenRes> AccountsReceived;
+	public event Action<ProtoOASymbolsListRes> SymbolsReceived;
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CTraderClient"/>.
+	/// </summary>
+	public CTraderClient(string applicationId, string applicationSecret, string host, int port)
+	{
+		_applicationId = applicationId ?? throw new ArgumentNullException(nameof(applicationId));
+		_applicationSecret = applicationSecret ?? throw new ArgumentNullException(nameof(applicationSecret));
+		_host = host ?? throw new ArgumentNullException(nameof(host));
+		_port = port;
+	}
+
+	/// <summary>
+	/// Connects to cTrader server.
+	/// </summary>
+	public async ValueTask Connect(CancellationToken cancellationToken)
+	{
+		try
+		{
+			this.AddInfoLog("Connecting to cTrader OpenAPI at {0}:{1}", _host, _port);
+
+			_client = new OpenClient(_host, _port, TimeSpan.FromSeconds(30));
+
+			// Subscribe to message events
+			_client.OfType<ProtoOASpotEvent>().Subscribe(OnSpotEvent, OnClientError);
+			_client.OfType<ProtoOADepthEvent>().Subscribe(OnDepthQuotes, OnClientError);
+			_client.OfType<ProtoOAGetTrendbarsRes>().Subscribe(OnTrendbar, OnClientError);
+			_client.OfType<ProtoOAExecutionEvent>().Subscribe(OnExecution, OnClientError);
+			_client.OfType<ProtoOAOrderErrorEvent>().Subscribe(OnOrderErrorEvent, OnClientError);
+			_client.OfType<ProtoOAGetAccountListByAccessTokenRes>().Subscribe(OnAccounts, OnClientError);
+			_client.OfType<ProtoOASymbolsListRes>().Subscribe(OnSymbolsList, OnClientError);
+
+			await _client.Connect();
+
+			StateChanged?.Invoke(ConnectionStates.Connected);
+			this.AddInfoLog("Connected to cTrader OpenAPI");
+		}
+		catch (Exception ex)
+		{
+			this.AddErrorLog("Failed to connect: {0}", ex);
+			Error?.Invoke(ex);
+			throw;
+		}
+	}
+
+	/// <summary>
+	/// Authenticates the application.
+	/// </summary>
+	public async ValueTask AuthenticateAsync(CancellationToken cancellationToken)
+	{
+		try
+		{
+			this.AddInfoLog("Authenticating application {0}", _applicationId);
+
+			var authReq = new ProtoOAApplicationAuthReq
+			{
+				ClientId = _applicationId,
+				ClientSecret = _applicationSecret
+			};
+
+			await _client.SendMessage(authReq);
+
+			_isAuthenticated = true;
+			this.AddInfoLog("Application authentication request sent");
+		}
+		catch (Exception ex)
+		{
+			this.AddErrorLog("Authentication failed: {0}", ex);
+			Error?.Invoke(ex);
+			throw;
+		}
+	}
+
+	/// <summary>
+	/// Gets list of symbols for an account.
+	/// </summary>
+	public async ValueTask<ProtoOASymbolsListRes> GetSymbolsAsync(long accountId, CancellationToken cancellationToken)
+	{
+		_symbolsTaskSource = new TaskCompletionSource<ProtoOASymbolsListRes>();
+
+		var req = new ProtoOASymbolsListReq
+		{
+			CtidTraderAccountId = accountId
+		};
+		await _client.SendMessage(req);
+		this.AddDebugLog("Symbols list request sent for account {0}", accountId);
+
+		// Wait for response via event handler
+		return await _symbolsTaskSource.Task;
+	}
+
+	/// <summary>
+	/// Subscribes to spot events (ticks) for a symbol.
+	/// </summary>
+	public async ValueTask SubscribeSpots(long accountId, IEnumerable<long> symbolIds, CancellationToken cancellationToken)
+	{
+		var req = new ProtoOASubscribeSpotsReq
+		{
+			CtidTraderAccountId = accountId
+		};
+		req.SymbolId.AddRange(symbolIds);
+
+		await _client.SendMessage(req);
+		this.AddDebugLog("Subscribed to spots for {0} symbols", symbolIds.Count());
+	}
+
+	/// <summary>
+	/// Unsubscribes from spot events.
+	/// </summary>
+	public async ValueTask UnsubscribeSpots(long accountId, IEnumerable<long> symbolIds, CancellationToken cancellationToken)
+	{
+		var req = new ProtoOAUnsubscribeSpotsReq
+		{
+			CtidTraderAccountId = accountId
+		};
+		req.SymbolId.AddRange(symbolIds);
+
+		await _client.SendMessage(req);
+		this.AddDebugLog("Unsubscribed from spots for {0} symbols", symbolIds.Count());
+	}
+
+	/// <summary>
+	/// Subscribes to market depth.
+	/// </summary>
+	public async ValueTask SubscribeDepth(long accountId, long symbolId, CancellationToken cancellationToken)
+	{
+		var req = new ProtoOASubscribeDepthQuotesReq
+		{
+			CtidTraderAccountId = accountId
+		};
+		req.SymbolId.Add(symbolId);
+
+		await _client.SendMessage(req);
+		this.AddDebugLog("Subscribed to depth for symbol {0}", symbolId);
+	}
+
+	/// <summary>
+	/// Unsubscribes from market depth.
+	/// </summary>
+	public async ValueTask UnsubscribeDepth(long accountId, long symbolId, CancellationToken cancellationToken)
+	{
+		var req = new ProtoOAUnsubscribeDepthQuotesReq
+		{
+			CtidTraderAccountId = accountId
+		};
+		req.SymbolId.Add(symbolId);
+
+		await _client.SendMessage(req);
+		this.AddDebugLog("Unsubscribed from depth for symbol {0}", symbolId);
+	}
+
+	/// <summary>
+	/// Registers a new order.
+	/// </summary>
+	public async ValueTask NewOrderAsync(
+		long accountId,
+		long symbolId,
+		ProtoOATradeSide tradeSide,
+		long volume,
+		ProtoOAOrderType orderType,
+		double? limitPrice = null,
+		double? stopPrice = null,
+		CancellationToken cancellationToken = default)
+	{
+		var req = new ProtoOANewOrderReq
+		{
+			CtidTraderAccountId = accountId,
+			SymbolId = symbolId,
+			OrderType = orderType,
+			TradeSide = tradeSide,
+			Volume = volume
+		};
+
+		if (limitPrice.HasValue)
+			req.LimitPrice = limitPrice.Value;
+
+		if (stopPrice.HasValue)
+			req.StopPrice = stopPrice.Value;
+
+		await _client.SendMessage(req);
+		this.AddDebugLog("New order request sent for symbol {0}", symbolId);
+	}
+
+	/// <summary>
+	/// Cancels an existing order.
+	/// </summary>
+	public async ValueTask CancelOrderAsync(
+		long accountId,
+		long orderId,
+		CancellationToken cancellationToken)
+	{
+		var req = new ProtoOACancelOrderReq
+		{
+			CtidTraderAccountId = accountId,
+			OrderId = orderId
+		};
+
+		await _client.SendMessage(req);
+		this.AddDebugLog("Cancel order request sent for order {0}", orderId);
+	}
+
+	/// <summary>
+	/// Disconnects from cTrader server.
+	/// </summary>
+	public void Disconnect()
+	{
+		this.AddInfoLog("Disconnecting from cTrader");
+
+		if (_client != null)
+		{
+			_client.Dispose();
+			_client = null;
+		}
+
+		_isAuthenticated = false;
+		StateChanged?.Invoke(ConnectionStates.Disconnected);
+	}
+
+	// Event handlers
+	private void OnClientError(Exception ex)
+	{
+		this.AddErrorLog("OpenAPI client error: {0}", ex);
+		Error?.Invoke(ex);
+	}
+
+	private void OnSpotEvent(ProtoOASpotEvent spotEvent)
+	{
+		NewSpot?.Invoke(spotEvent);
+	}
+
+	private void OnDepthQuotes(ProtoOADepthEvent depthQuotes)
+	{
+		NewDepth?.Invoke(depthQuotes);
+	}
+
+	private void OnTrendbar(ProtoOAGetTrendbarsRes trendbar)
+	{
+		NewCandle?.Invoke(trendbar);
+	}
+
+	private void OnExecution(ProtoOAExecutionEvent executionEvent)
+	{
+		ExecutionEvent?.Invoke(executionEvent);
+	}
+
+	private void OnOrderErrorEvent(ProtoOAOrderErrorEvent orderError)
+	{
+		OrderError?.Invoke(orderError);
+	}
+
+	private void OnAccounts(ProtoOAGetAccountListByAccessTokenRes accounts)
+	{
+		AccountsReceived?.Invoke(accounts);
+	}
+
+	private void OnSymbolsList(ProtoOASymbolsListRes symbols)
+	{
+		_symbolsTaskSource?.TrySetResult(symbols);
+		SymbolsReceived?.Invoke(symbols);
+	}
+
+	protected override void DisposeManaged()
+	{
+		Disconnect();
+		base.DisposeManaged();
+	}
+
+	// to get readable name after obfuscation
+	public override string Name => nameof(CTraderConnector) + "_" + nameof(CTraderClient);
+}

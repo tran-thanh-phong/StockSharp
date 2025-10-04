@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../../common_connectors.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>StockSharp.CTraderConnector</AssemblyName>
+    <RootNamespace>StockSharp.CTraderConnector</RootNamespace>
+    <Description>StockSharp connector for cTrader trading platform</Description>
+    <Product>StockSharp cTrader Connector</Product>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="cTrader.OpenAPI.Net" Version="1.4.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Algo\Algo.csproj" />
+    <ProjectReference Include="..\..\..\BusinessEntities\BusinessEntities.csproj" />
+  </ItemGroup>
+</Project>
