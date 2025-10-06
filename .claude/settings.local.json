@@ -8,9 +8,32 @@
       "Bash(chmod:*)",
       "Bash(find:*)",
       "WebFetch(domain:help.ctrader.com)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(powershell.exe:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:doc.stocksharp.com)",
+      "Bash(powershell:*)",
+      "Bash(dotnet test:*)",
+      "Bash(dotnet build:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+      "Bash(dotnet clean:*)",
+      "Read(//e/Sources/github/tungdigital132/Autotrading_System_Sen4/document/**)",
+      "WebFetch(domain:deepwiki.com)",
+      "Bash(dotnet sln:*)",
+      "Bash(test:*)",
+      "Bash(mkdir:*)",
+      "Bash(dotnet nuget locals:*)",
+      "Read(//e/Sources/github/tran-thanh-phong/OpenAPI.Net/Messages/**)",
+      "Read(//e/Sources/github/tran-thanh-phong/OpenAPI.Net/src/OpenAPI.Net/Messages/**)",
+      "Read(//e/Sources/github/tran-thanh-phong/OpenAPI.Net/**)"
     ],
     "deny": [],
     "ask": []
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "python3 .claude/scripts/context-monitor.py"
   }
 }
