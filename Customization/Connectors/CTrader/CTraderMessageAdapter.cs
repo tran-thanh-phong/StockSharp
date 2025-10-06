@@ -70,14 +70,14 @@ public partial class CTraderMessageAdapter : AsyncMessageAdapter
 	public override async ValueTask ConnectAsync(ConnectMessage connectMsg, CancellationToken cancellationToken)
 	{
 		this.AddInfoLog("Connecting to cTrader");
-		
+
 		// Required App Key & Secret to connect to get public data
 		if (ApplicationId.IsEmpty())
 			throw new InvalidOperationException(LocalizedStrings.KeyNotSpecified);
 
 		if (ApplicationSecret.IsEmpty())
 			throw new InvalidOperationException(LocalizedStrings.SecretNotSpecified);
-		
+
 		if (this.IsTransactional())
 		{
 			if (AccessToken.IsEmpty())
@@ -87,12 +87,17 @@ public partial class CTraderMessageAdapter : AsyncMessageAdapter
 		if (_client != null)
 			throw new InvalidOperationException(LocalizedStrings.NotDisconnectPrevTime);
 
+		// Get host and port from environment using ApiInfo helper
+		var mode = Environment == CTraderEnvironment.Demo ? OpenAPI.Net.Helpers.Mode.Demo : OpenAPI.Net.Helpers.Mode.Live;
+		var host = OpenAPI.Net.Helpers.ApiInfo.GetHost(mode);
+		var port = OpenAPI.Net.Helpers.ApiInfo.Port;
+
 		var secret = ApplicationSecret?.UnSecure() ?? string.Empty;
-		_client = new CTraderClient(ApplicationId, secret, Host, Port) { Parent = this };
+		_client = new CTraderClient(ApplicationId, secret, host, port) { Parent = this };
 
 		SubscribeClient();
 
-		this.AddInfoLog("Connecting to cTrader {0} at {1}:{2}", Environment, Host, Port);
+		this.AddInfoLog("Connecting to cTrader {0} at {1}:{2}", Environment, host, port);
 		await _client.Connect(cancellationToken);
 
 		// Authenticate application
@@ -101,10 +106,25 @@ public partial class CTraderMessageAdapter : AsyncMessageAdapter
 			await _client.AuthenticateAsync(cancellationToken);
 		}
 
-		// Authorize account if access token is provided
-		if (!AccessToken.IsEmpty() && AccountId > 0)
+		// Get account list and authorize account
+		if (!AccessToken.IsEmpty())
 		{
 			var accessToken = AccessToken.UnSecure();
+
+			// If AccountId is not set, get account list and use the first one
+			if (AccountId <= 0)
+			{
+				this.AddInfoLog("AccountId not configured, fetching account list...");
+				var accountsRes = await _client.GetAccountListAsync(accessToken, cancellationToken);
+
+				if (accountsRes.CtidTraderAccount.Count == 0)
+					throw new InvalidOperationException("No trading accounts found for the provided access token");
+
+				AccountId = (long)accountsRes.CtidTraderAccount[0].CtidTraderAccountId;
+				this.AddInfoLog("Using first account from list: AccountId={0}", AccountId);
+			}
+
+			// Authorize the account
 			await _client.AuthorizeAccountAsync(AccountId, accessToken, cancellationToken);
 			this.AddInfoLog("Account {0} authorized with access token", AccountId);
 		}
@@ -172,6 +192,9 @@ public partial class CTraderMessageAdapter : AsyncMessageAdapter
 		// Account events
 		_client.AccountsReceived += OnAccountsReceived;
 		_client.SymbolsReceived += OnSymbolsReceived;
+
+		// Token refresh event
+		_client.TokenRefreshed += OnTokenRefreshed;
 	}
 
 	private void UnsubscribeClient()
@@ -191,6 +214,9 @@ public partial class CTraderMessageAdapter : AsyncMessageAdapter
 		// Account events
 		_client.AccountsReceived -= OnAccountsReceived;
 		_client.SymbolsReceived -= OnSymbolsReceived;
+
+		// Token refresh event
+		_client.TokenRefreshed -= OnTokenRefreshed;
 	}
 
 	// Event handlers
@@ -303,5 +329,17 @@ public partial class CTraderMessageAdapter : AsyncMessageAdapter
 	private void OnSymbolsReceived(ProtoOASymbolsListRes symbols)
 	{
 		// Symbols are handled in SecurityLookupAsync
+	}
+
+	private void OnTokenRefreshed(ProtoOARefreshTokenRes response)
+	{
+		// Update stored tokens when refresh occurs
+		AccessToken = response.AccessToken.Secure();
+		if (!string.IsNullOrEmpty(response.RefreshToken))
+			RefreshToken = response.RefreshToken.Secure();
+
+		this.AddInfoLog("Access token refreshed. New token expires at: {0}",
+			DateTimeOffset.FromUnixTimeMilliseconds(response.ExpiresIn));
+		this.AddWarningLog("Token refreshed - you may need to re-authorize trading accounts");
 	}
 }

@@ -22,6 +22,8 @@ class CTraderClient : BaseLogReceiver
 	private TaskCompletionSource<ProtoOASymbolsListRes> _symbolsTaskSource;
 	private TaskCompletionSource<ProtoOATraderRes> _traderTaskSource;
 	private TaskCompletionSource<ProtoOAReconcileRes> _reconcileTaskSource;
+	private TaskCompletionSource<ProtoOAGetAccountListByAccessTokenRes> _accountListTaskSource;
+	private TaskCompletionSource<ProtoOARefreshTokenRes> _refreshTokenTaskSource;
 
 	public event Action<ConnectionStates> StateChanged;
 	public event Action<Exception> Error;
@@ -38,6 +40,9 @@ class CTraderClient : BaseLogReceiver
 	// Account events
 	public event Action<ProtoOAGetAccountListByAccessTokenRes> AccountsReceived;
 	public event Action<ProtoOASymbolsListRes> SymbolsReceived;
+
+	// Token refresh event
+	public event Action<ProtoOARefreshTokenRes> TokenRefreshed;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CTraderClient"/>.
@@ -61,18 +66,22 @@ class CTraderClient : BaseLogReceiver
 
 			_client = new OpenClient(_host, _port, TimeSpan.FromSeconds(30), useWebSocket: useWebSocket);
 
-			// Subscribe to message events
-			_client.OfType<ProtoOAApplicationAuthRes>().Subscribe(OnAppAuthResponse, OnClientError);
-			_client.OfType<ProtoOAAccountAuthRes>().Subscribe(OnAccountAuthResponse, OnClientError);
-			_client.OfType<ProtoOASpotEvent>().Subscribe(OnSpotEvent, OnClientError);
-			_client.OfType<ProtoOADepthEvent>().Subscribe(OnDepthQuotes, OnClientError);
-			_client.OfType<ProtoOAGetTrendbarsRes>().Subscribe(OnTrendbar, OnClientError);
-			_client.OfType<ProtoOAExecutionEvent>().Subscribe(OnExecution, OnClientError);
-			_client.OfType<ProtoOAOrderErrorEvent>().Subscribe(OnOrderErrorEvent, OnClientError);
-			_client.OfType<ProtoOAGetAccountListByAccessTokenRes>().Subscribe(OnAccounts, OnClientError);
-			_client.OfType<ProtoOASymbolsListRes>().Subscribe(OnSymbolsList, OnClientError);
-			_client.OfType<ProtoOATraderRes>().Subscribe(OnTrader, OnClientError);
-			_client.OfType<ProtoOAReconcileRes>().Subscribe(OnReconcile, OnClientError);
+			// Subscribe to all messages with unified error handler (exclude heartbeat for cleaner logging)
+			_client.Where(iMessage => iMessage is not ProtoHeartbeatEvent).Subscribe(OnMessageReceived, OnClientError);
+
+			// Subscribe to specific message types for routing
+			_client.OfType<ProtoOAApplicationAuthRes>().Subscribe(OnAppAuthResponse);
+			_client.OfType<ProtoOAAccountAuthRes>().Subscribe(OnAccountAuthResponse);
+			_client.OfType<ProtoOASpotEvent>().Subscribe(OnSpotEvent);
+			_client.OfType<ProtoOADepthEvent>().Subscribe(OnDepthQuotes);
+			_client.OfType<ProtoOAGetTrendbarsRes>().Subscribe(OnTrendbar);
+			_client.OfType<ProtoOAExecutionEvent>().Subscribe(OnExecution);
+			_client.OfType<ProtoOAOrderErrorEvent>().Subscribe(OnOrderErrorEvent);
+			_client.OfType<ProtoOAGetAccountListByAccessTokenRes>().Subscribe(OnAccounts);
+			_client.OfType<ProtoOASymbolsListRes>().Subscribe(OnSymbolsList);
+			_client.OfType<ProtoOATraderRes>().Subscribe(OnTrader);
+			_client.OfType<ProtoOAReconcileRes>().Subscribe(OnReconcile);
+			_client.OfType<ProtoOARefreshTokenRes>().Subscribe(OnRefreshTokenResponse);
 
 			await _client.Connect();
 
@@ -205,6 +214,42 @@ class CTraderClient : BaseLogReceiver
 
 		// Wait for response via event handler
 		return await _reconcileTaskSource.Task;
+	}
+
+	/// <summary>
+	/// Gets list of trading accounts associated with the access token.
+	/// </summary>
+	public async ValueTask<ProtoOAGetAccountListByAccessTokenRes> GetAccountListAsync(string accessToken, CancellationToken cancellationToken)
+	{
+		_accountListTaskSource = new TaskCompletionSource<ProtoOAGetAccountListByAccessTokenRes>();
+
+		var req = new ProtoOAGetAccountListByAccessTokenReq
+		{
+			AccessToken = accessToken
+		};
+		await _client.SendMessage(req);
+		this.AddDebugLog("Account list request sent");
+
+		// Wait for response via event handler
+		return await _accountListTaskSource.Task;
+	}
+
+	/// <summary>
+	/// Refreshes the OAuth2 access token using refresh token.
+	/// </summary>
+	public async ValueTask<ProtoOARefreshTokenRes> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
+	{
+		_refreshTokenTaskSource = new TaskCompletionSource<ProtoOARefreshTokenRes>();
+
+		var req = new ProtoOARefreshTokenReq
+		{
+			RefreshToken = refreshToken
+		};
+		await _client.SendMessage(req);
+		this.AddInfoLog("Refresh token request sent");
+
+		// Wait for response via event handler
+		return await _refreshTokenTaskSource.Task;
 	}
 
 	/// <summary>
@@ -351,6 +396,11 @@ class CTraderClient : BaseLogReceiver
 	}
 
 	// Event handlers
+	private void OnMessageReceived(IMessage message)
+	{
+		this.AddDebugLog("Message received: {0}", message.GetType().Name);
+	}
+
 	private void OnClientError(Exception ex)
 	{
 		this.AddErrorLog("OpenAPI client error: {0}", ex);
@@ -384,6 +434,8 @@ class CTraderClient : BaseLogReceiver
 
 	private void OnAccounts(ProtoOAGetAccountListByAccessTokenRes accounts)
 	{
+		this.AddInfoLog("Received account list with {0} accounts", accounts.CtidTraderAccount.Count);
+		_accountListTaskSource?.TrySetResult(accounts);
 		AccountsReceived?.Invoke(accounts);
 	}
 
@@ -414,6 +466,13 @@ class CTraderClient : BaseLogReceiver
 	private void OnReconcile(ProtoOAReconcileRes reconcile)
 	{
 		_reconcileTaskSource?.TrySetResult(reconcile);
+	}
+
+	private void OnRefreshTokenResponse(ProtoOARefreshTokenRes response)
+	{
+		this.AddInfoLog("Token refreshed successfully. New AccessToken received, ExpiresIn: {0}", response.ExpiresIn);
+		_refreshTokenTaskSource?.TrySetResult(response);
+		TokenRefreshed?.Invoke(response);
 	}
 
 	protected override void DisposeManaged()

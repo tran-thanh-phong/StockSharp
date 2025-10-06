@@ -146,8 +146,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algo.Analytics", "Algo.Anal
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Customization", "Customization", "{4DBEA4F8-2C19-46A0-ADEF-A07DC9DBFBFF}"
 	ProjectSection(SolutionItems) = preProject
-		Customization\Documents\Features\cTrader-Connector\connector-specification.md = Customization\Documents\Features\cTrader-Connector\connector-specification.md
-		Customization\Documents\Features\cTrader-Connector\ctrader-connector-analysis.md = Customization\Documents\Features\cTrader-Connector\ctrader-connector-analysis.md
 		Customization\Documents\Features\cTrader-Connector\ctrader_connector_specification.md = Customization\Documents\Features\cTrader-Connector\ctrader_connector_specification.md
 	EndProjectSection
 EndProject

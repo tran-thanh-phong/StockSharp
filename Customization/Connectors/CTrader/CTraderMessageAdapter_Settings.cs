@@ -57,59 +57,19 @@ public partial class CTraderMessageAdapter
 	public SecureString RefreshToken { get; set; }
 
 	/// <summary>
-	/// Account ID for trading operations.
-	/// </summary>
-	[Display(
-		Name = "Account ID",
-		Description = "Account ID for trading operations",
-		GroupName = "Connection",
-		Order = 4)]
-	public long AccountId { get; set; }
-
-	/// <summary>
-	/// Server host for connection.
-	/// </summary>
-	[Display(
-		Name = "Host",
-		Description = "Server host address",
-		GroupName = "Connection",
-		Order = 5)]
-	public string Host { get; set; } = "demo.ctraderapi.com";
-
-	/// <summary>
-	/// Server port for connection.
-	/// </summary>
-	[Display(
-		Name = "Port",
-		Description = "Server port",
-		GroupName = "Connection",
-		Order = 6)]
-	public int Port { get; set; } = 5035;
-
-	private CTraderEnvironment _environment = CTraderEnvironment.Demo;
-
-	/// <summary>
 	/// cTrader environment (Demo/Live).
 	/// </summary>
 	[Display(
 		Name = "Environment",
 		Description = "Trading environment (Demo or Live)",
 		GroupName = "Connection",
-		Order = 7)]
-	public CTraderEnvironment Environment
-	{
-		get => _environment;
-		set
-		{
-			_environment = value;
+		Order = 4)]
+	public CTraderEnvironment Environment { get; set; } = CTraderEnvironment.Demo;
 
-			// Update host based on environment
-			if (value == CTraderEnvironment.Demo && Host == "live.ctraderapi.com")
-				Host = "demo.ctraderapi.com";
-			else if (value == CTraderEnvironment.Live && Host == "demo.ctraderapi.com")
-				Host = "live.ctraderapi.com";
-		}
-	}
+	/// <summary>
+	/// Account ID for trading operations (auto-populated from access token).
+	/// </summary>
+	public long AccountId { get; set; }
 
 	/// <inheritdoc />
 	public override void Save(SettingsStorage storage)
@@ -120,9 +80,6 @@ public partial class CTraderMessageAdapter
 		storage.SetValue(nameof(ApplicationSecret), ApplicationSecret);
 		storage.SetValue(nameof(AccessToken), AccessToken);
 		storage.SetValue(nameof(RefreshToken), RefreshToken);
-		storage.SetValue(nameof(AccountId), AccountId);
-		storage.SetValue(nameof(Host), Host);
-		storage.SetValue(nameof(Port), Port);
 		storage.SetValue(nameof(Environment), Environment);
 	}
 
@@ -135,16 +92,16 @@ public partial class CTraderMessageAdapter
 		ApplicationSecret = storage.GetValue<SecureString>(nameof(ApplicationSecret));
 		AccessToken = storage.GetValue<SecureString>(nameof(AccessToken));
 		RefreshToken = storage.GetValue<SecureString>(nameof(RefreshToken));
-		AccountId = storage.GetValue<long>(nameof(AccountId));
-		Host = storage.GetValue<string>(nameof(Host));
-		Port = storage.GetValue<int>(nameof(Port));
 		Environment = storage.GetValue<CTraderEnvironment>(nameof(Environment));
 	}
 
 	/// <inheritdoc />
 	public override string ToString()
 	{
-		return base.ToString() + ": " + ApplicationId + "@" + Environment;
+		var result = base.ToString() + ": " + ApplicationId + "@" + Environment;
+		if (AccountId > 0)
+			result += $" (Account: {AccountId})";
+		return result;
 	}
 }
 
