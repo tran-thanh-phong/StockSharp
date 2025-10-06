@@ -209,6 +209,7 @@ partial class BitStampMessageAdapter
 	/// <inheritdoc />
 	public override async ValueTask SecurityLookupAsync(SecurityLookupMessage lookupMsg, CancellationToken cancellationToken)
 	{
+		LogInfo("SecurityLookupAsync 1");
 		var secTypes = lookupMsg.GetSecurityTypes();
 		var left = lookupMsg.Count ?? long.MaxValue;
 
@@ -237,5 +238,6 @@ partial class BitStampMessageAdapter
 		}
 
 		SendSubscriptionFinished(lookupMsg.TransactionId);
+		LogInfo($"SecurityLookupAsync {lookupMsg.TransactionId} {lookupMsg.Count}");
 	}
 }

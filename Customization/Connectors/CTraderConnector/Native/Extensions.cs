@@ -1,7 +1,9 @@
 namespace StockSharp.CTraderConnector.Native;
 
-static class Extensions
+public static class Extensions
 {
+	public const string BoardCode = "CTRADER";
+	
 	/// <summary>
 	/// Convert cTrader symbol code to StockSharp SecurityId.
 	/// </summary>
@@ -10,7 +12,7 @@ static class Extensions
 		return new SecurityId
 		{
 			SecurityCode = symbolCode,
-			BoardCode = BoardCodes.CTrader,
+			BoardCode = BoardCode,
 		};
 	}
 

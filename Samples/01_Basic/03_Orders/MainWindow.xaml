@@ -6,33 +6,51 @@
 	xmlns:xaml="http://schemas.stocksharp.com/xaml"
          x:Class="StockSharp.Samples.Basic.Orders.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="941" Width="1018">
+        Title="MainWindow" Height="941" Width="1318">
 	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="180"/>
-			<ColumnDefinition Width="180"/>
-			<ColumnDefinition Width="180"/>
-			<ColumnDefinition Width="180"/>
-			<ColumnDefinition Width="290"/>
-		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="30"/>
-			<RowDefinition Height="30"/>
-			<RowDefinition Height="261*"/>
-			<RowDefinition Height="575*"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
-		<Button Grid.Row="0" Grid.Column="0" x:Name="Setting" Content="Setting" Click="Setting_Click" />
-		<Button Grid.Row="0" Grid.Column="1" x:Name="Connect" Content="Connect" Click="Connect_Click" />
 
-		<xaml:MyTradeGrid x:Name="MyTradeGrid" Grid.Row="3" Margin="0" Grid.ColumnSpan="5" Grid.Column="0" />
+		<Grid Grid.Row="0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
 
-		<xaml:PortfolioEditor x:Name="PortfolioEditor" Grid.Row="0" Grid.Column="3"/>
-		<xaml:SecurityEditor x:Name="SecurityEditor" Grid.Row="0" Grid.Column="2"/>
-		<xaml:OrderGrid x:Name="OrderGrid" Grid.Row="2" Grid.ColumnSpan="5" Grid.Column="0" />
+			<!-- Left Panel: Controls -->
+			<Grid Grid.Column="0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="180"/>
+					<ColumnDefinition Width="180"/>
+					<ColumnDefinition Width="180"/>
+					<ColumnDefinition Width="180"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="261*"/>
+					<RowDefinition Height="575*"/>
+				</Grid.RowDefinitions>
 
-		<Button x:Name="Buy" Content="Buy" Grid.Column="1" Grid.Row="1" Click="Buy_Click"/>
-		<Button x:Name="Sell" Content="Sell" Grid.Column="2" Grid.Row="1" Click="Sell_Click"/>
-		<TextBox x:Name="TextBoxPrice" Grid.Row="1" Grid.Column="0" Text="Price"/>
+				<Button Grid.Row="0" Grid.Column="0" x:Name="Setting" Content="Setting" Click="Setting_Click" />
+				<Button Grid.Row="0" Grid.Column="1" x:Name="Connect" Content="Connect" Click="Connect_Click" />
 
+				<xaml:PortfolioEditor x:Name="PortfolioEditor" Grid.Row="0" Grid.Column="3"/>
+				<xaml:SecurityEditor x:Name="SecurityEditor" Grid.Row="0" Grid.Column="2"/>
+
+				<Button x:Name="Buy" Content="Buy" Grid.Column="1" Grid.Row="1" Click="Buy_Click"/>
+				<Button x:Name="Sell" Content="Sell" Grid.Column="2" Grid.Row="1" Click="Sell_Click"/>
+				<TextBox x:Name="TextBoxPrice" Grid.Row="1" Grid.Column="0" Text="Price"/>
+
+				<xaml:OrderGrid x:Name="OrderGrid" Grid.Row="2" Grid.ColumnSpan="5" Grid.Column="0" />
+				<xaml:MyTradeGrid x:Name="MyTradeGrid" Grid.Row="3" Margin="0" Grid.ColumnSpan="5" Grid.Column="0" />
+			</Grid>
+
+			<!-- Right Panel: Log Monitor -->
+			<xaml:Monitor x:Name="LogMonitor" Grid.Column="1" ShowStrategies="False" />
+		</Grid>
 	</Grid>
 </Window>

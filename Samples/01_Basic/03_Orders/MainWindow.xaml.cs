@@ -1,4 +1,6 @@
-﻿namespace StockSharp.Samples.Basic.Orders;
+﻿using Ecng.Xaml;
+
+namespace StockSharp.Samples.Basic.Orders;
 
 using System.Windows;
 using System.IO;
@@ -6,17 +8,20 @@ using System.IO;
 using Ecng.Serialization;
 using Ecng.Configuration;
 using Ecng.Collections;
+using Ecng.Logging;
 
 using StockSharp.Algo;
 using StockSharp.BusinessEntities;
 using StockSharp.Configuration;
 using StockSharp.Messages;
 using StockSharp.Xaml;
+using System;
 
 public partial class MainWindow
 {
 	private readonly Connector _connector = new();
 	private const string _connectorFile = "ConnectorFile.json";
+	private readonly LogManager _logManager = new();
 
 	public MainWindow()
 	{
@@ -24,6 +29,11 @@ public partial class MainWindow
 
 		// registering all connectors
 		ConfigManager.RegisterService<IMessageAdapterProvider>(new InMemoryMessageAdapterProvider(_connector.Adapter.InnerAdapters));
+
+		// configure logging
+		_logManager.FlushInterval = TimeSpan.FromMilliseconds(1); // immediate flush
+		_logManager.Listeners.Add(new GuiLogListener(LogMonitor));
+		_logManager.Sources.Add(_connector);
 
 		if (File.Exists(_connectorFile))
 		{
@@ -38,20 +48,46 @@ public partial class MainWindow
 			_connector.Save().Serialize(_connectorFile);
 		}
 	}
+	
 
 	private void Connect_Click(object sender, RoutedEventArgs e)
 	{
-		SecurityEditor.SecurityProvider = _connector;
-		PortfolioEditor.Portfolios = new PortfolioDataSource(_connector);
+		// SecurityEditor.SecurityProvider = _connector;
+		// PortfolioEditor.Portfolios = new PortfolioDataSource(_connector);
+		
+		try
+		{
+            _connector.OrderReceived += OrderReceived;
 
-		_connector.OrderReceived += (s, o) => OrderGrid.Orders.TryAdd(o);
-		_connector.OrderRegisterFailReceived += (s, f) => OrderGrid.AddRegistrationFail(f);
-		_connector.OwnTradeReceived += (s, t) => MyTradeGrid.Trades.TryAdd(t);
+            _connector.OrderRegisterFailReceived += (s, f) => OrderGrid.AddRegistrationFail(f);
+            _connector.OwnTradeReceived += (s, t) => MyTradeGrid.Trades.TryAdd(t);
 
-		_connector.Connect();
+			// Subscribe to connection events
+			_connector.Connected += () =>
+			{
+				Dispatcher.Invoke(() =>
+				{
+					SecurityEditor.SecurityProvider = _connector;
+					PortfolioEditor.Portfolios = new PortfolioDataSource(_connector);
+				});		
+				_connector.AddInfoLog("[Connect_Click] Connector connected.");
+			};
+
+            _connector.Connect();
+        }
+        catch (Exception ex)
+		{
+			_connector.AddErrorLog(ex);
+		}
 	}
+	
+    private void OrderReceived(Subscription s, Order o)
+	{
+        OrderGrid.Orders.TryAdd(o);
+    }
 
-	private void Buy_Click(object sender, RoutedEventArgs e)
+
+    private void Buy_Click(object sender, RoutedEventArgs e)
 	{
 		var order = new Order
 		{
@@ -63,7 +99,7 @@ public partial class MainWindow
 		};
 
 		_connector.RegisterOrder(order);
-	}
+    }
 
 
 	private void Sell_Click(object sender, RoutedEventArgs e)

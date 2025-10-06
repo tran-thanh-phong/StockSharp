@@ -8,6 +8,13 @@ partial class CTraderMessageAdapter
 		var secTypes = lookupMsg.GetSecurityTypes();
 		var left = lookupMsg.Count ?? long.MaxValue;
 
+		if (_client == null)
+		{
+			this.AddErrorLog("SecurityLookup requires connection. Please connect first.");
+			SendSubscriptionFinished(lookupMsg.TransactionId);
+			return;
+		}
+
 		try
 		{
 			this.AddInfoLog("Security lookup for account {0}", AccountId);

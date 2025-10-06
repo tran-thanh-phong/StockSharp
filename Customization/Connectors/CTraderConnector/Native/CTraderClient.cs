@@ -17,7 +17,11 @@ class CTraderClient : BaseLogReceiver
 
 	private OpenClient _client;
 	private bool _isAuthenticated;
+	private TaskCompletionSource<ProtoOAApplicationAuthRes> _appAuthTaskSource;
+	private TaskCompletionSource<ProtoOAAccountAuthRes> _accountAuthTaskSource;
 	private TaskCompletionSource<ProtoOASymbolsListRes> _symbolsTaskSource;
+	private TaskCompletionSource<ProtoOATraderRes> _traderTaskSource;
+	private TaskCompletionSource<ProtoOAReconcileRes> _reconcileTaskSource;
 
 	public event Action<ConnectionStates> StateChanged;
 	public event Action<Exception> Error;
@@ -49,15 +53,17 @@ class CTraderClient : BaseLogReceiver
 	/// <summary>
 	/// Connects to cTrader server.
 	/// </summary>
-	public async ValueTask Connect(CancellationToken cancellationToken)
+	public async ValueTask Connect(CancellationToken cancellationToken, bool useWebSocket = false)
 	{
 		try
 		{
 			this.AddInfoLog("Connecting to cTrader OpenAPI at {0}:{1}", _host, _port);
 
-			_client = new OpenClient(_host, _port, TimeSpan.FromSeconds(30));
+			_client = new OpenClient(_host, _port, TimeSpan.FromSeconds(30), useWebSocket: useWebSocket);
 
 			// Subscribe to message events
+			_client.OfType<ProtoOAApplicationAuthRes>().Subscribe(OnAppAuthResponse, OnClientError);
+			_client.OfType<ProtoOAAccountAuthRes>().Subscribe(OnAccountAuthResponse, OnClientError);
 			_client.OfType<ProtoOASpotEvent>().Subscribe(OnSpotEvent, OnClientError);
 			_client.OfType<ProtoOADepthEvent>().Subscribe(OnDepthQuotes, OnClientError);
 			_client.OfType<ProtoOAGetTrendbarsRes>().Subscribe(OnTrendbar, OnClientError);
@@ -65,11 +71,12 @@ class CTraderClient : BaseLogReceiver
 			_client.OfType<ProtoOAOrderErrorEvent>().Subscribe(OnOrderErrorEvent, OnClientError);
 			_client.OfType<ProtoOAGetAccountListByAccessTokenRes>().Subscribe(OnAccounts, OnClientError);
 			_client.OfType<ProtoOASymbolsListRes>().Subscribe(OnSymbolsList, OnClientError);
+			_client.OfType<ProtoOATraderRes>().Subscribe(OnTrader, OnClientError);
+			_client.OfType<ProtoOAReconcileRes>().Subscribe(OnReconcile, OnClientError);
 
 			await _client.Connect();
 
-			StateChanged?.Invoke(ConnectionStates.Connected);
-			this.AddInfoLog("Connected to cTrader OpenAPI");
+			this.AddInfoLog("[CTraderClient.Connect] Connected to cTrader OpenAPI.");
 		}
 		catch (Exception ex)
 		{
@@ -88,6 +95,8 @@ class CTraderClient : BaseLogReceiver
 		{
 			this.AddInfoLog("Authenticating application {0}", _applicationId);
 
+			_appAuthTaskSource = new TaskCompletionSource<ProtoOAApplicationAuthRes>();
+
 			var authReq = new ProtoOAApplicationAuthReq
 			{
 				ClientId = _applicationId,
@@ -95,13 +104,50 @@ class CTraderClient : BaseLogReceiver
 			};
 
 			await _client.SendMessage(authReq);
-
-			_isAuthenticated = true;
 			this.AddInfoLog("Application authentication request sent");
+
+			// Wait for response
+			var result = await _appAuthTaskSource.Task;
+			_isAuthenticated = true;
+			this.AddInfoLog($"Application authenticated: {result.ToJson()}");
 		}
 		catch (Exception ex)
 		{
 			this.AddErrorLog("Authentication failed: {0}", ex);
+			Error?.Invoke(ex);
+			throw;
+		}
+	}
+
+	/// <summary>
+	/// Authorizes a trading account using OAuth2 access token.
+	/// </summary>
+	public async ValueTask AuthorizeAccountAsync(long accountId, string accessToken, CancellationToken cancellationToken)
+	{
+		try
+		{
+			this.AddInfoLog("Authorizing account {0}", accountId);
+
+			_accountAuthTaskSource = new TaskCompletionSource<ProtoOAAccountAuthRes>();
+
+			var authReq = new ProtoOAAccountAuthReq
+			{
+				CtidTraderAccountId = accountId,
+				AccessToken = accessToken
+			};
+
+			await _client.SendMessage(authReq);
+			this.AddInfoLog("Account authorization request sent for account {0}", accountId);
+
+			// Wait for response
+			await _accountAuthTaskSource.Task;
+			this.AddInfoLog("Account {0} authorized. Change status to Connected.", accountId);
+			
+			StateChanged?.Invoke(ConnectionStates.Connected);
+		}
+		catch (Exception ex)
+		{
+			this.AddErrorLog("Account authorization failed: {0}", ex);
 			Error?.Invoke(ex);
 			throw;
 		}
@@ -123,6 +169,42 @@ class CTraderClient : BaseLogReceiver
 
 		// Wait for response via event handler
 		return await _symbolsTaskSource.Task;
+	}
+
+	/// <summary>
+	/// Gets trader/account data including balance, equity, margin.
+	/// </summary>
+	public async ValueTask<ProtoOATraderRes> GetTraderAsync(long accountId, CancellationToken cancellationToken)
+	{
+		_traderTaskSource = new TaskCompletionSource<ProtoOATraderRes>();
+
+		var req = new ProtoOATraderReq
+		{
+			CtidTraderAccountId = accountId
+		};
+		await _client.SendMessage(req);
+		this.AddDebugLog("Trader data request sent for account {0}", accountId);
+
+		// Wait for response via event handler
+		return await _traderTaskSource.Task;
+	}
+
+	/// <summary>
+	/// Reconciles account state - gets all active orders and positions.
+	/// </summary>
+	public async ValueTask<ProtoOAReconcileRes> ReconcileAsync(long accountId, CancellationToken cancellationToken)
+	{
+		_reconcileTaskSource = new TaskCompletionSource<ProtoOAReconcileRes>();
+
+		var req = new ProtoOAReconcileReq
+		{
+			CtidTraderAccountId = accountId
+		};
+		await _client.SendMessage(req);
+		this.AddDebugLog("Reconcile request sent for account {0}", accountId);
+
+		// Wait for response via event handler
+		return await _reconcileTaskSource.Task;
 	}
 
 	/// <summary>
@@ -194,8 +276,12 @@ class CTraderClient : BaseLogReceiver
 		ProtoOATradeSide tradeSide,
 		long volume,
 		ProtoOAOrderType orderType,
+		string clientOrderId = null,
 		double? limitPrice = null,
 		double? stopPrice = null,
+		double? stopLoss = null,
+		double? takeProfit = null,
+		bool? trailingStopLoss = null,
 		CancellationToken cancellationToken = default)
 	{
 		var req = new ProtoOANewOrderReq
@@ -207,14 +293,26 @@ class CTraderClient : BaseLogReceiver
 			Volume = volume
 		};
 
+		if (!string.IsNullOrEmpty(clientOrderId))
+			req.ClientOrderId = clientOrderId;
+
 		if (limitPrice.HasValue)
 			req.LimitPrice = limitPrice.Value;
 
 		if (stopPrice.HasValue)
 			req.StopPrice = stopPrice.Value;
 
+		if (stopLoss.HasValue)
+			req.StopLoss = stopLoss.Value;
+
+		if (takeProfit.HasValue)
+			req.TakeProfit = takeProfit.Value;
+
+		if (trailingStopLoss.HasValue)
+			req.TrailingStopLoss = trailingStopLoss.Value;
+
 		await _client.SendMessage(req);
-		this.AddDebugLog("New order request sent for symbol {0}", symbolId);
+		this.AddDebugLog("New order request sent for symbol {0}, ClientOrderId={1}", symbolId, clientOrderId);
 	}
 
 	/// <summary>
@@ -289,10 +387,33 @@ class CTraderClient : BaseLogReceiver
 		AccountsReceived?.Invoke(accounts);
 	}
 
+	private void OnAppAuthResponse(ProtoOAApplicationAuthRes response)
+	{
+		this.AddInfoLog("Application authenticated successfully");
+		_appAuthTaskSource?.TrySetResult(response);
+	}
+
+	private void OnAccountAuthResponse(ProtoOAAccountAuthRes response)
+	{
+		this.AddInfoLog("Account {0} authorized successfully", response.CtidTraderAccountId);
+		_accountAuthTaskSource?.TrySetResult(response);
+	}
+
 	private void OnSymbolsList(ProtoOASymbolsListRes symbols)
 	{
+		LogInfo($"OnSymbolsList: {symbols.Symbol.Count.ToString()}. TaskSource: {_symbolsTaskSource != null}");
 		_symbolsTaskSource?.TrySetResult(symbols);
 		SymbolsReceived?.Invoke(symbols);
+	}
+
+	private void OnTrader(ProtoOATraderRes trader)
+	{
+		_traderTaskSource?.TrySetResult(trader);
+	}
+
+	private void OnReconcile(ProtoOAReconcileRes reconcile)
+	{
+		_reconcileTaskSource?.TrySetResult(reconcile);
 	}
 
 	protected override void DisposeManaged()

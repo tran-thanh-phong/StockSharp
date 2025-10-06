@@ -145,64 +145,25 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algo.Analytics", "Algo.Analytics\Algo.Analytics.csproj", "{5D10DF74-5E91-CCF8-9F7A-6862074F0A80}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Customization", "Customization", "{4DBEA4F8-2C19-46A0-ADEF-A07DC9DBFBFF}"
+	ProjectSection(SolutionItems) = preProject
+		Customization\Documents\Features\cTrader-Connector\connector-specification.md = Customization\Documents\Features\cTrader-Connector\connector-specification.md
+		Customization\Documents\Features\cTrader-Connector\ctrader-connector-analysis.md = Customization\Documents\Features\cTrader-Connector\ctrader-connector-analysis.md
+		Customization\Documents\Features\cTrader-Connector\ctrader_connector_specification.md = Customization\Documents\Features\cTrader-Connector\ctrader_connector_specification.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Strategies", "Strategies", "{7198F5F0-E8F0-4309-B5C4-71148B88C7A5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicStrategies", "Customization\Strategies\BasicStrategies\BasicStrategies.csproj", "{501EC05D-5971-4657-A08D-714521FDE9AE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Connectors", "Connectors", "{03641B31-54DD-4ED8-8FCB-DD256215F8DD}"
-	ProjectSection(SolutionItems) = preProject
-		Customization\Connectors\CTrader\CTrader.csproj = Customization\Connectors\CTrader\CTrader.csproj
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Algo.dll = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Algo.dll
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Algo.pdb = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Algo.pdb
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Algo.xml = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Algo.xml
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.BusinessEntities.dll = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.BusinessEntities.dll
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.BusinessEntities.pdb = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.BusinessEntities.pdb
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.BusinessEntities.xml = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.BusinessEntities.xml
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Charting.Interfaces.dll = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Charting.Interfaces.dll
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Charting.Interfaces.pdb = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Charting.Interfaces.pdb
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Charting.Interfaces.xml = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Charting.Interfaces.xml
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Configuration.dll = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Configuration.dll
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Configuration.pdb = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Configuration.pdb
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Configuration.xml = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Configuration.xml
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.CTrader.deps.json = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.CTrader.deps.json
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.CTrader.dll = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.CTrader.dll
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.CTrader.pdb = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.CTrader.pdb
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.CTrader.xml = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.CTrader.xml
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Localization.dll = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Localization.dll
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Localization.pdb = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Localization.pdb
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Localization.xml = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Localization.xml
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Media.Names.dll = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Media.Names.dll
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Media.Names.pdb = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Media.Names.pdb
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Media.Names.xml = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Media.Names.xml
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Messages.dll = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Messages.dll
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Messages.pdb = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Messages.pdb
-		Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Messages.xml = Customization\Connectors\CTrader\bin\Debug\net6.0\StockSharp.Messages.xml
-		Customization\Connectors\CTrader\CTraderMessageAdapter.cs = Customization\Connectors\CTrader\CTraderMessageAdapter.cs
-		Customization\Connectors\CTrader\obj\CTrader.csproj.nuget.dgspec.json = Customization\Connectors\CTrader\obj\CTrader.csproj.nuget.dgspec.json
-		Customization\Connectors\CTrader\obj\CTrader.csproj.nuget.g.props = Customization\Connectors\CTrader\obj\CTrader.csproj.nuget.g.props
-		Customization\Connectors\CTrader\obj\CTrader.csproj.nuget.g.targets = Customization\Connectors\CTrader\obj\CTrader.csproj.nuget.g.targets
-		Customization\Connectors\CTrader\obj\Debug\net6.0\.NETCoreApp,Version=v6.0.AssemblyAttributes.cs = Customization\Connectors\CTrader\obj\Debug\net6.0\.NETCoreApp,Version=v6.0.AssemblyAttributes.cs
-		Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.assets.cache = Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.assets.cache
-		Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.csproj.AssemblyReference.cache = Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.csproj.AssemblyReference.cache
-		Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.csproj.CoreCompileInputs.cache = Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.csproj.CoreCompileInputs.cache
-		Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.csproj.FileListAbsolute.txt = Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.csproj.FileListAbsolute.txt
-		Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.csproj.Up2Date = Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.csproj.Up2Date
-		Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.GeneratedMSBuildEditorConfig.editorconfig = Customization\Connectors\CTrader\obj\Debug\net6.0\CTrader.GeneratedMSBuildEditorConfig.editorconfig
-		Customization\Connectors\CTrader\obj\Debug\net6.0\ref\StockSharp.CTrader.dll = Customization\Connectors\CTrader\obj\Debug\net6.0\ref\StockSharp.CTrader.dll
-		Customization\Connectors\CTrader\obj\Debug\net6.0\refint\StockSharp.CTrader.dll = Customization\Connectors\CTrader\obj\Debug\net6.0\refint\StockSharp.CTrader.dll
-		Customization\Connectors\CTrader\obj\Debug\net6.0\StockSharp.CTrader.dll = Customization\Connectors\CTrader\obj\Debug\net6.0\StockSharp.CTrader.dll
-		Customization\Connectors\CTrader\obj\Debug\net6.0\StockSharp.CTrader.pdb = Customization\Connectors\CTrader\obj\Debug\net6.0\StockSharp.CTrader.pdb
-		Customization\Connectors\CTrader\obj\Debug\net6.0\StockSharp.CTrader.xml = Customization\Connectors\CTrader\obj\Debug\net6.0\StockSharp.CTrader.xml
-		Customization\Connectors\CTrader\obj\project.assets.json = Customization\Connectors\CTrader\obj\project.assets.json
-		Customization\Connectors\CTrader\obj\project.nuget.cache = Customization\Connectors\CTrader\obj\project.nuget.cache
-		Customization\Connectors\CTrader\Properties\AssemblyInfo.cs = Customization\Connectors\CTrader\Properties\AssemblyInfo.cs
-		Customization\Connectors\CTrader\Properties\usings.cs = Customization\Connectors\CTrader\Properties\usings.cs
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Indicators", "Indicators", "{2FF5822A-D1BC-436D-95EA-260995317890}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{483FA1EF-2669-4FFB-A219-A3EFFDCA5C4B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CTrader", "Customization\Connectors\CTrader\CTrader.csproj", "{7F7261C3-9F25-4254-9FC8-A54AC44B3118}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CTraderConnector", "Customization\Connectors\CTraderConnector\CTraderConnector.csproj", "{ECD9EEA2-2446-46B1-AF21-951D2037F741}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -450,6 +411,14 @@ Global
 		{501EC05D-5971-4657-A08D-714521FDE9AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{501EC05D-5971-4657-A08D-714521FDE9AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{501EC05D-5971-4657-A08D-714521FDE9AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F7261C3-9F25-4254-9FC8-A54AC44B3118}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F7261C3-9F25-4254-9FC8-A54AC44B3118}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F7261C3-9F25-4254-9FC8-A54AC44B3118}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F7261C3-9F25-4254-9FC8-A54AC44B3118}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECD9EEA2-2446-46B1-AF21-951D2037F741}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECD9EEA2-2446-46B1-AF21-951D2037F741}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECD9EEA2-2446-46B1-AF21-951D2037F741}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECD9EEA2-2446-46B1-AF21-951D2037F741}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -511,6 +480,8 @@ Global
 		{03641B31-54DD-4ED8-8FCB-DD256215F8DD} = {4DBEA4F8-2C19-46A0-ADEF-A07DC9DBFBFF}
 		{2FF5822A-D1BC-436D-95EA-260995317890} = {4DBEA4F8-2C19-46A0-ADEF-A07DC9DBFBFF}
 		{483FA1EF-2669-4FFB-A219-A3EFFDCA5C4B} = {4DBEA4F8-2C19-46A0-ADEF-A07DC9DBFBFF}
+		{7F7261C3-9F25-4254-9FC8-A54AC44B3118} = {03641B31-54DD-4ED8-8FCB-DD256215F8DD}
+		{ECD9EEA2-2446-46B1-AF21-951D2037F741} = {03641B31-54DD-4ED8-8FCB-DD256215F8DD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {05C6C3D9-0063-47AB-BC11-315B396BEBD0}

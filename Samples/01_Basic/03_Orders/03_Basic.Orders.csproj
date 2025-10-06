@@ -4,4 +4,8 @@
   <ItemGroup>
     <PackageReference Include="StockSharp.Xaml" Version="$(StockSharpVer)" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Connectors\BitStamp\BitStamp.csproj" />
+    <ProjectReference Include="..\..\..\Customization\Connectors\CTraderConnector\CTraderConnector.csproj" />
+  </ItemGroup>
 </Project>

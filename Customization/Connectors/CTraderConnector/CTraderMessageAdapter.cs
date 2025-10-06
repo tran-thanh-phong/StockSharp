@@ -46,7 +46,11 @@ public partial class CTraderMessageAdapter : AsyncMessageAdapter
 	}
 
 	/// <inheritdoc />
-	public override string[] AssociatedBoards { get; } = new[] { BoardCodes.CTrader };
+	public override bool IsAllDownloadingSupported(StockSharp.Messages.DataType dataType)
+		=> dataType == StockSharp.Messages.DataType.Securities || base.IsAllDownloadingSupported(dataType);
+	
+	/// <inheritdoc />
+	public override string[] AssociatedBoards { get; } = new[] { Native.Extensions.BoardCode };
 
 	/// <summary>
 	/// Possible time-frames.
@@ -65,13 +69,19 @@ public partial class CTraderMessageAdapter : AsyncMessageAdapter
 	/// <inheritdoc />
 	public override async ValueTask ConnectAsync(ConnectMessage connectMsg, CancellationToken cancellationToken)
 	{
+		this.AddInfoLog("Connecting to cTrader");
+		
+		// Required App Key & Secret to connect to get public data
+		if (ApplicationId.IsEmpty())
+			throw new InvalidOperationException(LocalizedStrings.KeyNotSpecified);
+
+		if (ApplicationSecret.IsEmpty())
+			throw new InvalidOperationException(LocalizedStrings.SecretNotSpecified);
+		
 		if (this.IsTransactional())
 		{
-			if (ApplicationId.IsEmpty())
-				throw new InvalidOperationException(LocalizedStrings.KeyNotSpecified);
-
-			if (ApplicationSecret.IsEmpty())
-				throw new InvalidOperationException(LocalizedStrings.SecretNotSpecified);
+			if (AccessToken.IsEmpty())
+				throw new InvalidOperationException(LocalizedStrings.AccessToken);
 		}
 
 		if (_client != null)
@@ -90,6 +100,16 @@ public partial class CTraderMessageAdapter : AsyncMessageAdapter
 		{
 			await _client.AuthenticateAsync(cancellationToken);
 		}
+
+		// Authorize account if access token is provided
+		if (!AccessToken.IsEmpty() && AccountId > 0)
+		{
+			var accessToken = AccessToken.UnSecure();
+			await _client.AuthorizeAccountAsync(AccountId, accessToken, cancellationToken);
+			this.AddInfoLog("Account {0} authorized with access token", AccountId);
+		}
+
+		this.AddInfoLog("Connected to cTrader");
 	}
 
 	/// <inheritdoc />
@@ -247,7 +267,27 @@ public partial class CTraderMessageAdapter : AsyncMessageAdapter
 
 	private void OnExecutionEvent(ProtoOAExecutionEvent execution)
 	{
-		// Will be implemented in transaction partial
+		try
+		{
+			this.AddDebugLog("Execution event: Type={0}, HasOrder={1}, HasDeal={2}, HasPosition={3}",
+				execution.ExecutionType, execution.Order != null, execution.Deal != null, execution.Position != null);
+
+			// Handle order-related events
+			if (execution.Order != null)
+			{
+				ProcessOrderExecution(execution);
+			}
+
+			// Handle trade/fill events
+			if (execution.Deal != null)
+			{
+				ProcessDealExecution(execution);
+			}
+		}
+		catch (Exception ex)
+		{
+			this.AddErrorLog("Error processing execution event: {0}", ex);
+		}
 	}
 
 	private void OnOrderError(ProtoOAOrderErrorEvent error)
