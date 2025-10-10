@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\..\common_target_tests.props" />
+  <ItemGroup>
+    <PackageReference Include="Moq" Version="$(MoqVer)" />
+    <PackageReference Include="System.Drawing.Common" Version="$(MsExtensionsVer)" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Connectors\CTrader\CTrader.csproj" />
+    <ProjectReference Include="..\..\..\Algo\Algo.csproj" />
+    <ProjectReference Include="..\..\..\BusinessEntities\BusinessEntities.csproj" />
+    <ProjectReference Include="..\..\..\Messages\Messages.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Resources\*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
