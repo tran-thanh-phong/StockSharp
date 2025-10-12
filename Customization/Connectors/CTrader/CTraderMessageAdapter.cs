@@ -1,4 +1,4 @@
-namespace StockSharp.CTraderConnector;
+namespace StockSharp.Customization.CTrader;
 
 using System.ComponentModel.DataAnnotations;
 
@@ -24,6 +24,7 @@ public partial class CTraderMessageAdapter : AsyncMessageAdapter
 	private CTraderClient _client;
 	private readonly Dictionary<long, string> _symbolIdToCode = new();
 	private readonly Dictionary<string, long> _symbolCodeToId = new();
+	private long _accountId;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CTraderMessageAdapter"/>.
@@ -72,15 +73,15 @@ public partial class CTraderMessageAdapter : AsyncMessageAdapter
 		this.AddInfoLog("Connecting to cTrader");
 
 		// Required App Key & Secret to connect to get public data
-		if (ApplicationId.IsEmpty())
+		if (Key.IsEmpty())
 			throw new InvalidOperationException(LocalizedStrings.KeyNotSpecified);
 
-		if (ApplicationSecret.IsEmpty())
+		if (Secret.IsEmpty())
 			throw new InvalidOperationException(LocalizedStrings.SecretNotSpecified);
 
 		if (this.IsTransactional())
 		{
-			if (AccessToken.IsEmpty())
+			if (Token.IsEmpty())
 				throw new InvalidOperationException(LocalizedStrings.AccessToken);
 		}
 
@@ -88,45 +89,43 @@ public partial class CTraderMessageAdapter : AsyncMessageAdapter
 			throw new InvalidOperationException(LocalizedStrings.NotDisconnectPrevTime);
 
 		// Get host and port from environment using ApiInfo helper
-		var mode = Environment == CTraderEnvironment.Demo ? OpenAPI.Net.Helpers.Mode.Demo : OpenAPI.Net.Helpers.Mode.Live;
+		var mode = IsDemo ? OpenAPI.Net.Helpers.Mode.Demo : OpenAPI.Net.Helpers.Mode.Live;
 		var host = OpenAPI.Net.Helpers.ApiInfo.GetHost(mode);
 		var port = OpenAPI.Net.Helpers.ApiInfo.Port;
 
-		var secret = ApplicationSecret?.UnSecure() ?? string.Empty;
-		_client = new CTraderClient(ApplicationId, secret, host, port) { Parent = this };
+		var secret = Secret?.UnSecure() ?? string.Empty;
+		var keyId = Key?.UnSecure() ?? string.Empty;
+		_client = new CTraderClient(keyId, secret, host, port) { Parent = this };
 
 		SubscribeClient();
 
-		this.AddInfoLog("Connecting to cTrader {0} at {1}:{2}", Environment, host, port);
+		this.AddInfoLog("Connecting to cTrader {0} at {1}:{2}", IsDemo ? "Demo" : "Live", host, port);
 		await _client.Connect(cancellationToken);
 
 		// Authenticate application
-		if (!ApplicationId.IsEmpty() && !secret.IsEmpty())
+		if (!Key.IsEmpty() && !secret.IsEmpty())
 		{
 			await _client.AuthenticateAsync(cancellationToken);
 		}
 
 		// Get account list and authorize account
-		if (!AccessToken.IsEmpty())
+		if (!Token.IsEmpty())
 		{
-			var accessToken = AccessToken.UnSecure();
+			var accessToken = Token.UnSecure();
 
-			// If AccountId is not set, get account list and use the first one
-			if (AccountId <= 0)
-			{
-				this.AddInfoLog("AccountId not configured, fetching account list...");
-				var accountsRes = await _client.GetAccountListAsync(accessToken, cancellationToken);
+			// Fetch account list and use the first one (AccountId will be stored locally)
+			this.AddInfoLog("Fetching account list...");
+			var accountsRes = await _client.GetAccountListAsync(accessToken, cancellationToken);
 
-				if (accountsRes.CtidTraderAccount.Count == 0)
-					throw new InvalidOperationException("No trading accounts found for the provided access token");
+			if (accountsRes.CtidTraderAccount.Count == 0)
+				throw new InvalidOperationException("No trading accounts found for the provided access token");
 
-				AccountId = (long)accountsRes.CtidTraderAccount[0].CtidTraderAccountId;
-				this.AddInfoLog("Using first account from list: AccountId={0}", AccountId);
-			}
+			_accountId = (long)accountsRes.CtidTraderAccount[0].CtidTraderAccountId;
+			this.AddInfoLog("Using first account from list: AccountId={0}", _accountId);
 
 			// Authorize the account
-			await _client.AuthorizeAccountAsync(AccountId, accessToken, cancellationToken);
-			this.AddInfoLog("Account {0} authorized with access token", AccountId);
+			await _client.AuthorizeAccountAsync(_accountId, accessToken, cancellationToken);
+			this.AddInfoLog("Account {0} authorized with access token", _accountId);
 		}
 
 		this.AddInfoLog("Connected to cTrader");
@@ -161,6 +160,7 @@ public partial class CTraderMessageAdapter : AsyncMessageAdapter
 			}
 
 			_client = null;
+			_accountId = 0;
 		}
 
 		SendOutMessage(new ResetMessage());
@@ -334,7 +334,7 @@ public partial class CTraderMessageAdapter : AsyncMessageAdapter
 	private void OnTokenRefreshed(ProtoOARefreshTokenRes response)
 	{
 		// Update stored tokens when refresh occurs
-		AccessToken = response.AccessToken.Secure();
+		Token = response.AccessToken.Secure();
 		if (!string.IsNullOrEmpty(response.RefreshToken))
 			RefreshToken = response.RefreshToken.Secure();
 

@@ -1,6 +1,8 @@
-namespace StockSharp.CTraderConnector.Tests.Integration;
+using StockSharp.Customization.CTrader.Tests.Helpers;
 
-using StockSharp.CTraderConnector.Tests.Helpers;
+namespace StockSharp.Customization.CTrader.Tests.Integration;
+
+using CTrader.Tests.Helpers;
 
 /// <summary>
 /// Integration tests for CTrader connection and configuration message flow.
@@ -18,11 +20,10 @@ public class CTraderConnectionFlowTests
 		var adapter = CTraderIntegrationTestHelper.CreateAdapterForTesting(out var messages);
 
 		// Assert
-		adapter.ApplicationId.AssertEqual("test_integration_app");
-		adapter.ApplicationSecret.UnSecure().AssertEqual("test_integration_secret");
-		adapter.AccessToken.UnSecure().AssertEqual("test_integration_token");
-		adapter.Environment.AssertEqual(CTraderEnvironment.Demo);
-		adapter.AccountId.AssertEqual(999999L);
+		adapter.Key.UnSecure().AssertEqual("test_integration_app");
+		adapter.Secret.UnSecure().AssertEqual("test_integration_secret");
+		adapter.Token.UnSecure().AssertEqual("test_integration_token");
+		adapter.IsDemo.AssertTrue();
 		adapter.HeartbeatInterval.AssertEqual(TimeSpan.FromSeconds(10));
 	}
 
@@ -41,11 +42,10 @@ public class CTraderConnectionFlowTests
 		adapter2.Load(storage);
 
 		// Assert
-		adapter2.ApplicationId.AssertEqual(adapter1.ApplicationId);
-		adapter2.ApplicationSecret.UnSecure().AssertEqual(adapter1.ApplicationSecret.UnSecure());
-		adapter2.AccessToken.UnSecure().AssertEqual(adapter1.AccessToken.UnSecure());
-		adapter2.Environment.AssertEqual(adapter1.Environment);
-		// Note: AccountId is not saved/loaded - it's populated from access token
+		adapter2.Key.UnSecure().AssertEqual(adapter1.Key.UnSecure());
+		adapter2.Secret.UnSecure().AssertEqual(adapter1.Secret.UnSecure());
+		adapter2.Token.UnSecure().AssertEqual(adapter1.Token.UnSecure());
+		adapter2.IsDemo.AssertEqual(adapter1.IsDemo);
 	}
 
 	[TestMethod]
@@ -113,22 +113,22 @@ public class CTraderConnectionFlowTests
 	}
 
 	[TestMethod]
-	public void Adapter_Environment_CanSwitchBetweenDemoAndLive()
+	public void Adapter_IsDemo_CanSwitchBetweenDemoAndLive()
 	{
 		// Arrange
 		var adapter = CTraderIntegrationTestHelper.CreateAdapterForTesting(out var messages);
 
 		// Act - Switch to Live
-		adapter.Environment = CTraderEnvironment.Live;
+		adapter.IsDemo = false;
 
 		// Assert
-		adapter.Environment.AssertEqual(CTraderEnvironment.Live);
+		adapter.IsDemo.AssertFalse();
 
 		// Act - Switch back to Demo
-		adapter.Environment = CTraderEnvironment.Demo;
+		adapter.IsDemo = true;
 
 		// Assert
-		adapter.Environment.AssertEqual(CTraderEnvironment.Demo);
+		adapter.IsDemo.AssertTrue();
 	}
 
 	[TestMethod]
@@ -157,7 +157,6 @@ public class CTraderConnectionFlowTests
 		// Assert
 		result.Contains("test_integration_app").AssertTrue();
 		result.Contains("Demo").AssertTrue();
-		result.Contains("999999").AssertTrue();
 	}
 
 	[TestMethod]
@@ -208,12 +207,12 @@ public class CTraderConnectionFlowTests
 		var adapter2 = CTraderIntegrationTestHelper.CreateAdapterForTesting(out var messages2);
 
 		// Act
-		adapter1.Environment = CTraderEnvironment.Live;
-		adapter2.Environment = CTraderEnvironment.Demo;
+		adapter1.IsDemo = false;
+		adapter2.IsDemo = true;
 
 		// Assert
-		adapter1.Environment.AssertEqual(CTraderEnvironment.Live);
-		adapter2.Environment.AssertEqual(CTraderEnvironment.Demo);
+		adapter1.IsDemo.AssertFalse();
+		adapter2.IsDemo.AssertTrue();
 		messages1.AssertNotEqual(messages2);
 	}
 

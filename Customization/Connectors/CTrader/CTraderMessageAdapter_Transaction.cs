@@ -1,4 +1,4 @@
-namespace StockSharp.CTraderConnector;
+namespace StockSharp.Customization.CTrader;
 
 using OpenAPI.Net;
 
@@ -7,7 +7,7 @@ partial class CTraderMessageAdapter
 	private readonly Dictionary<long, RefPair<long, decimal>> _orderInfo = new();
 	private long _lastTradeId;
 
-	private string PortfolioName => "cTrader_" + ApplicationId + "_" + AccountId;
+	private string PortfolioName => "cTrader_" + Key?.ToId() + "_" + _accountId;
 
 	/// <inheritdoc />
 	public override async ValueTask RegisterOrderAsync(OrderRegisterMessage regMsg, CancellationToken cancellationToken)
@@ -62,7 +62,7 @@ partial class CTraderMessageAdapter
 
 			// Send order to cTrader
 			await _client.NewOrderAsync(
-				AccountId,
+				_accountId,
 				symbolId,
 				tradeSide,
 				volume,
@@ -105,7 +105,7 @@ partial class CTraderMessageAdapter
 		{
 			this.AddInfoLog("Cancelling order ID {0}", cancelMsg.OrderId);
 
-			await _client.CancelOrderAsync(AccountId, cancelMsg.OrderId.Value, cancellationToken);
+			await _client.CancelOrderAsync(_accountId, cancelMsg.OrderId.Value, cancellationToken);
 
 			// Note: Confirmation will come via ProtoOAExecutionEvent with OrderCancelled execution type
 			// We don't send immediate confirmation here - wait for execution event
@@ -142,10 +142,10 @@ partial class CTraderMessageAdapter
 
 		try
 		{
-			this.AddInfoLog("Order status reconciliation for account {0}", AccountId);
+			this.AddInfoLog("Order status reconciliation for account {0}", _accountId);
 
 			// Get all active orders and positions
-			var reconcileRes = await _client.ReconcileAsync(AccountId, cancellationToken);
+			var reconcileRes = await _client.ReconcileAsync(_accountId, cancellationToken);
 
 			// Process all active orders
 			foreach (var order in reconcileRes.Order)
@@ -239,10 +239,10 @@ partial class CTraderMessageAdapter
 
 		try
 		{
-			this.AddInfoLog("Portfolio lookup for account {0}", AccountId);
+			this.AddInfoLog("Portfolio lookup for account {0}", _accountId);
 
 			// Get trader/account data
-			var traderRes = await _client.GetTraderAsync(AccountId, cancellationToken);
+			var traderRes = await _client.GetTraderAsync(_accountId, cancellationToken);
 			var trader = traderRes.Trader;
 
 			var pfName = PortfolioName;

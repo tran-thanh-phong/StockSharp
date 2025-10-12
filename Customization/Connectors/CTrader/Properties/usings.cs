@@ -15,4 +15,4 @@ global using global::Newtonsoft.Json;
 
 global using global::StockSharp.Messages;
 global using global::StockSharp.Localization;
-global using global::StockSharp.CTraderConnector.Native;
+global using global::StockSharp.Customization.CTrader.Native;

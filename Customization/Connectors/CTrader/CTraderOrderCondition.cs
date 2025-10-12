@@ -1,4 +1,4 @@
-namespace StockSharp.CTraderConnector;
+namespace StockSharp.Customization.CTrader;
 
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;

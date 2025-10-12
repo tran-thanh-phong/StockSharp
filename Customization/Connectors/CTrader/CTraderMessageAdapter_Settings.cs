@@ -1,4 +1,4 @@
-namespace StockSharp.CTraderConnector;
+namespace StockSharp.Customization.CTrader;
 
 using System.ComponentModel.DataAnnotations;
 using System.Security;
@@ -9,42 +9,39 @@ using Ecng.ComponentModel;
 /// The message adapter for cTrader.
 /// </summary>
 [MediaIcon(Media.MediaNames.ctrader)]
-public partial class CTraderMessageAdapter
+public partial class CTraderMessageAdapter : IKeySecretAdapter, ITokenAdapter, IDemoAdapter
 {
 	/// <summary>
 	/// Default value for <see cref="MessageAdapter.HeartbeatInterval"/>.
 	/// </summary>
 	public static readonly TimeSpan DefaultHeartbeatInterval = TimeSpan.FromSeconds(30);
 
-	/// <summary>
-	/// Application ID for cTrader OAuth2 authentication.
-	/// </summary>
+	/// <inheritdoc />
 	[Display(
-		Name = "Application ID",
+		Name = "Key",
 		Description = "cTrader application ID for OAuth2 authentication",
 		GroupName = "Connection",
 		Order = 0)]
-	public string ApplicationId { get; set; }
+	[BasicSetting]
+	public SecureString Key { get; set; }
 
-	/// <summary>
-	/// Application secret for cTrader OAuth2 authentication.
-	/// </summary>
+	/// <inheritdoc />
 	[Display(
-		Name = "Application Secret",
+		Name = "Secret",
 		Description = "cTrader application secret for OAuth2 authentication",
 		GroupName = "Connection",
 		Order = 1)]
-	public SecureString ApplicationSecret { get; set; }
+	[BasicSetting]
+	public SecureString Secret { get; set; }
 
-	/// <summary>
-	/// OAuth2 access token for account authorization.
-	/// </summary>
+	/// <inheritdoc />
 	[Display(
-		Name = "Access Token",
+		Name = "Token",
 		Description = "OAuth2 access token for account authorization (optional, for demo purposes)",
 		GroupName = "Connection",
 		Order = 2)]
-	public SecureString AccessToken { get; set; }
+	[BasicSetting]
+	public SecureString Token { get; set; }
 
 	/// <summary>
 	/// OAuth2 refresh token for renewing access token.
@@ -54,33 +51,29 @@ public partial class CTraderMessageAdapter
 		Description = "OAuth2 refresh token for renewing access token (optional, for demo purposes)",
 		GroupName = "Connection",
 		Order = 3)]
+	[BasicSetting]
 	public SecureString RefreshToken { get; set; }
 
-	/// <summary>
-	/// cTrader environment (Demo/Live).
-	/// </summary>
+	/// <inheritdoc />
 	[Display(
-		Name = "Environment",
-		Description = "Trading environment (Demo or Live)",
+		Name = "Demo",
+		Description = "Connect to demo trading instead of real trading server",
 		GroupName = "Connection",
 		Order = 4)]
-	public CTraderEnvironment Environment { get; set; } = CTraderEnvironment.Demo;
+	[BasicSetting]
+	public bool IsDemo { get; set; } = true;
 
-	/// <summary>
-	/// Account ID for trading operations (auto-populated from access token).
-	/// </summary>
-	public long AccountId { get; set; }
-
+	
 	/// <inheritdoc />
 	public override void Save(SettingsStorage storage)
 	{
 		base.Save(storage);
 
-		storage.SetValue(nameof(ApplicationId), ApplicationId);
-		storage.SetValue(nameof(ApplicationSecret), ApplicationSecret);
-		storage.SetValue(nameof(AccessToken), AccessToken);
+		storage.SetValue(nameof(Key), Key);
+		storage.SetValue(nameof(Secret), Secret);
+		storage.SetValue(nameof(Token), Token);
 		storage.SetValue(nameof(RefreshToken), RefreshToken);
-		storage.SetValue(nameof(Environment), Environment);
+		storage.SetValue(nameof(IsDemo), IsDemo);
 	}
 
 	/// <inheritdoc />
@@ -88,35 +81,18 @@ public partial class CTraderMessageAdapter
 	{
 		base.Load(storage);
 
-		ApplicationId = storage.GetValue<string>(nameof(ApplicationId));
-		ApplicationSecret = storage.GetValue<SecureString>(nameof(ApplicationSecret));
-		AccessToken = storage.GetValue<SecureString>(nameof(AccessToken));
+		Key = storage.GetValue<SecureString>(nameof(Key));
+		Secret = storage.GetValue<SecureString>(nameof(Secret));
+		Token = storage.GetValue<SecureString>(nameof(Token));
 		RefreshToken = storage.GetValue<SecureString>(nameof(RefreshToken));
-		Environment = storage.GetValue<CTraderEnvironment>(nameof(Environment));
+		IsDemo = storage.GetValue<bool>(nameof(IsDemo));
 	}
 
 	/// <inheritdoc />
 	public override string ToString()
 	{
-		var result = base.ToString() + ": " + ApplicationId + "@" + Environment;
-		if (AccountId > 0)
-			result += $" (Account: {AccountId})";
+		var result = base.ToString() + ": " + Key?.ToId() + "@" + (IsDemo ? "Demo" : "Live");
 		return result;
 	}
 }
 
-/// <summary>
-/// cTrader environment enumeration.
-/// </summary>
-public enum CTraderEnvironment
-{
-	/// <summary>
-	/// Demo environment.
-	/// </summary>
-	Demo,
-
-	/// <summary>
-	/// Live environment.
-	/// </summary>
-	Live
-}

@@ -1,6 +1,8 @@
-namespace StockSharp.CTraderConnector.Tests.Integration;
+using StockSharp.Customization.CTrader.Tests.Helpers;
 
-using StockSharp.CTraderConnector.Tests.Helpers;
+namespace StockSharp.Customization.CTrader.Tests.Integration;
+
+using CTrader.Tests.Helpers;
 
 /// <summary>
 /// Integration tests for CTrader order execution message flow.

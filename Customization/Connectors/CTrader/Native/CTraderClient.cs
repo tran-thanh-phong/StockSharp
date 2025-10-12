@@ -1,4 +1,4 @@
-namespace StockSharp.CTraderConnector.Native;
+namespace StockSharp.Customization.CTrader.Native;
 
 using System.Reactive.Linq;
 using OpenAPI.Net;
@@ -482,5 +482,5 @@ class CTraderClient : BaseLogReceiver
 	}
 
 	// to get readable name after obfuscation
-	public override string Name => nameof(CTraderConnector) + "_" + nameof(CTraderClient);
+	public override string Name => nameof(CTrader) + "_" + nameof(CTraderClient);
 }

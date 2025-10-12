@@ -1,6 +1,6 @@
-namespace StockSharp.CTraderConnector.Tests;
+namespace StockSharp.Customization.CTrader.Tests;
 
-using StockSharp.CTraderConnector.Tests.Helpers;
+using CTrader.Tests.Helpers;
 
 /// <summary>
 /// Tests for cTrader adapter configuration and error handling.
@@ -70,12 +70,11 @@ public class CTraderMessageAdapterTests
 		// Arrange
 		var adapter1 = new CTraderMessageAdapter(new IncrementalIdGenerator())
 		{
-			ApplicationId = "test_app",
-			ApplicationSecret = "test_secret".Secure(),
-			AccessToken = "test_token".Secure(),
+			Key = "test_app".Secure(),
+			Secret = "test_secret".Secure(),
+			Token = "test_token".Secure(),
 			RefreshToken = "test_refresh".Secure(),
-			Environment = CTraderEnvironment.Live,
-			AccountId = 999888,
+			IsDemo = false,
 			HeartbeatInterval = TimeSpan.FromSeconds(60),
 		};
 
@@ -88,12 +87,11 @@ public class CTraderMessageAdapterTests
 		adapter2.Load(storage);
 
 		// Assert - Verify CTrader-specific settings are preserved
-		adapter2.ApplicationId.AssertEqual("test_app");
-		adapter2.ApplicationSecret.UnSecure().AssertEqual("test_secret");
-		adapter2.AccessToken.UnSecure().AssertEqual("test_token");
+		adapter2.Key.UnSecure().AssertEqual("test_app");
+		adapter2.Secret.UnSecure().AssertEqual("test_secret");
+		adapter2.Token.UnSecure().AssertEqual("test_token");
 		adapter2.RefreshToken.UnSecure().AssertEqual("test_refresh");
-		adapter2.Environment.AssertEqual(CTraderEnvironment.Live);
-		// Note: AccountId is not saved/loaded - it's populated from access token
+		adapter2.IsDemo.AssertFalse();
 		// Note: HeartbeatInterval is saved by base class
 	}
 
@@ -103,18 +101,16 @@ public class CTraderMessageAdapterTests
 		// Arrange
 		var adapter1 = new CTraderMessageAdapter(new IncrementalIdGenerator())
 		{
-			ApplicationId = "clone_test",
-			Environment = CTraderEnvironment.Demo,
-			AccountId = 111222,
+			Key = "clone_test".Secure(),
+			IsDemo = true,
 		};
 
 		// Act
 		var adapter2 = (CTraderMessageAdapter)adapter1.Clone();
 
 		// Assert - Verify values were copied
-		adapter2.ApplicationId.AssertEqual("clone_test");
-		adapter2.Environment.AssertEqual(CTraderEnvironment.Demo);
-		// Note: AccountId may not be cloned as it's populated from access token
+		adapter2.Key.UnSecure().AssertEqual("clone_test");
+		adapter2.IsDemo.AssertTrue();
 
 		// Verify it's a different instance
 		(adapter1 != adapter2).AssertTrue();
@@ -126,9 +122,8 @@ public class CTraderMessageAdapterTests
 		// Arrange
 		var adapter = new CTraderMessageAdapter(new IncrementalIdGenerator())
 		{
-			ApplicationId = "my_app",
-			Environment = CTraderEnvironment.Live,
-			AccountId = 777888,
+			Key = "my_app".Secure(),
+			IsDemo = false,
 		};
 
 		// Act
@@ -137,6 +132,5 @@ public class CTraderMessageAdapterTests
 		// Assert
 		result.Contains("my_app").AssertTrue();
 		result.Contains("Live").AssertTrue();
-		result.Contains("777888").AssertTrue();
 	}
 }

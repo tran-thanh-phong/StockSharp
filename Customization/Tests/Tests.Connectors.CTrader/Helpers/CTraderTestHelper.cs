@@ -1,4 +1,4 @@
-namespace StockSharp.CTraderConnector.Tests.Helpers;
+namespace StockSharp.Customization.CTrader.Tests.Helpers;
 
 /// <summary>
 /// Test helper utilities for cTrader connector tests using StockSharp interface pattern.
@@ -14,11 +14,10 @@ static class CTraderTestHelper
 	{
 		var adapter = new CTraderMessageAdapter(_idGenerator)
 		{
-			ApplicationId = "test_app_id",
-			ApplicationSecret = "test_secret".Secure(),
-			AccessToken = "test_access_token".Secure(),
-			Environment = CTraderEnvironment.Demo,
-			AccountId = 123456,
+			Key = "test_app_id".Secure(),
+			Secret = "test_secret".Secure(),
+			Token = "test_access_token".Secure(),
+			IsDemo = true,
 		};
 
 		var result = new List<Message>();

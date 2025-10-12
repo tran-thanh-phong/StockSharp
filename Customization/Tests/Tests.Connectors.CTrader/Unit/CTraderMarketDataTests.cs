@@ -1,6 +1,8 @@
-namespace StockSharp.CTraderConnector.Tests;
+using StockSharp.Customization.CTrader.Tests.Helpers;
 
-using StockSharp.CTraderConnector.Tests.Helpers;
+namespace StockSharp.Customization.CTrader.Tests;
+
+using CTrader.Tests.Helpers;
 
 /// <summary>
 /// Tests for cTrader market data subscriptions and processing.

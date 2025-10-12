@@ -1,4 +1,4 @@
-namespace StockSharp.CTraderConnector;
+namespace StockSharp.Customization.CTrader;
 
 partial class CTraderMessageAdapter
 {
@@ -17,9 +17,9 @@ partial class CTraderMessageAdapter
 
 		try
 		{
-			this.AddInfoLog("Security lookup for account {0}", AccountId);
+			this.AddInfoLog("Security lookup for account {0}", _accountId);
 
-			var symbolsRes = await _client.GetSymbolsAsync(AccountId, cancellationToken);
+			var symbolsRes = await _client.GetSymbolsAsync(_accountId, cancellationToken);
 
 			foreach (var symbol in symbolsRes.Symbol)
 			{
@@ -95,7 +95,7 @@ partial class CTraderMessageAdapter
 			{
 				if (_symbolCodeToId.TryGetValue(symbolCode, out var symbolId))
 				{
-					await _client.SubscribeDepth(AccountId, symbolId, cancellationToken);
+					await _client.SubscribeDepth(_accountId, symbolId, cancellationToken);
 					this.AddInfoLog("Subscribed to market depth for {0} (ID: {1})", symbolCode, symbolId);
 				}
 				else
@@ -110,7 +110,7 @@ partial class CTraderMessageAdapter
 		{
 			if (_symbolCodeToId.TryGetValue(symbolCode, out var symbolId))
 			{
-				await _client.UnsubscribeDepth(AccountId, symbolId, cancellationToken);
+				await _client.UnsubscribeDepth(_accountId, symbolId, cancellationToken);
 				this.AddInfoLog("Unsubscribed from market depth for {0}", symbolCode);
 			}
 		}
@@ -129,7 +129,7 @@ partial class CTraderMessageAdapter
 			{
 				if (_symbolCodeToId.TryGetValue(symbolCode, out var symbolId))
 				{
-					await _client.SubscribeSpots(AccountId, new[] { symbolId }, cancellationToken);
+					await _client.SubscribeSpots(_accountId, new[] { symbolId }, cancellationToken);
 					this.AddInfoLog("Subscribed to ticks for {0} (ID: {1})", symbolCode, symbolId);
 				}
 				else
@@ -144,7 +144,7 @@ partial class CTraderMessageAdapter
 		{
 			if (_symbolCodeToId.TryGetValue(symbolCode, out var symbolId))
 			{
-				await _client.UnsubscribeSpots(AccountId, new[] { symbolId }, cancellationToken);
+				await _client.UnsubscribeSpots(_accountId, new[] { symbolId }, cancellationToken);
 				this.AddInfoLog("Unsubscribed from ticks for {0}", symbolCode);
 			}
 		}

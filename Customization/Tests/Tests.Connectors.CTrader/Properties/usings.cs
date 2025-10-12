@@ -23,4 +23,4 @@ global using global::StockSharp.Configuration;
 global using global::StockSharp.Algo;
 global using global::StockSharp.Algo.Storages;
 global using global::StockSharp.Algo.Testing;
-global using global::StockSharp.CTraderConnector;
+global using global::StockSharp.Customization.CTrader;

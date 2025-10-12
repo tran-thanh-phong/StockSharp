@@ -1,4 +1,4 @@
-namespace StockSharp.CTraderConnector.Tests.Helpers;
+namespace StockSharp.Customization.CTrader.Tests.Helpers;
 
 /// <summary>
 /// Helper class for CTrader connector integration tests.
@@ -17,18 +17,17 @@ internal static class CTraderIntegrationTestHelper
 	{
 		var adapter = new CTraderMessageAdapter(_idGenerator)
 		{
-			ApplicationId = "test_integration_app",
-			ApplicationSecret = "test_integration_secret".Secure(),
-			AccessToken = "test_integration_token".Secure(),
-			Environment = CTraderEnvironment.Demo,
-			AccountId = 999999,
+			Key = "test_integration_app".Secure(),
+			Secret = "test_integration_secret".Secure(),
+			Token = "test_integration_token".Secure(),
+			IsDemo = true,
 			HeartbeatInterval = TimeSpan.FromSeconds(10),
 		};
 
 		var result = new List<Message>();
 		adapter.NewOutMessage += result.Add;
 		messages = result;
-
+		
 		return adapter;
 	}
 

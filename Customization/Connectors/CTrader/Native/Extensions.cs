@@ -1,4 +1,4 @@
-namespace StockSharp.CTraderConnector.Native;
+namespace StockSharp.Customization.CTrader.Native;
 
 public static class Extensions
 {
