@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <LangVersion>12</LangVersion>
+  </PropertyGroup>
+  <Import Project="..\..\..\..\Samples\common_samples_net.props" />
+  <Import Project="..\..\..\..\Samples\common_connectors.props" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Algo\Algo.csproj" />
+    <ProjectReference Include="..\..\..\Connectors\Connectors\Connectors.csproj" />
+    <ProjectReference Include="..\..\..\Connectors\CTrader\CTrader.csproj" />
+  </ItemGroup>
+</Project>
