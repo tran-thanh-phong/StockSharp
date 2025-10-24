@@ -1,3 +1,5 @@
+using StockSharp.Configuration;
+
 namespace StockSharp.Customization.CTrader;
 
 using System.ComponentModel.DataAnnotations;

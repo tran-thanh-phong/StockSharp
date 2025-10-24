@@ -76,6 +76,7 @@ partial class CTraderClient : BaseLogReceiver
 			_client.OfType<ProtoOAGetTrendbarsRes>().Subscribe(OnTrendbar);
 			_client.OfType<ProtoOAExecutionEvent>().Subscribe(OnExecution);
 			_client.OfType<ProtoOAOrderErrorEvent>().Subscribe(OnOrderErrorEvent);
+			
 			await _client.Connect();
 
 			this.AddInfoLog("[CTraderClient.Connect] Connected to cTrader OpenAPI.");

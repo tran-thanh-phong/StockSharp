@@ -252,7 +252,7 @@ partial class CTraderMessageAdapter
 			{
 				PortfolioName = pfName,
 				BoardCode = Native.Extensions.BoardCode,
-				OriginalTransactionId = transactionId,
+				OriginalTransactionId = transactionId
 			});
 
 			// Calculate equity and available margin
@@ -267,6 +267,7 @@ partial class CTraderMessageAdapter
 				PortfolioName = pfName,
 				SecurityId = SecurityId.Money,
 				ServerTime = CurrentTime.ConvertToUtc(),
+				OriginalTransactionId = transactionId
 			}
 			.TryAdd(PositionChangeTypes.BeginValue, balance)
 			.TryAdd(PositionChangeTypes.CurrentValue, balance)
@@ -280,7 +281,9 @@ partial class CTraderMessageAdapter
 		}
 
 		if (lookupMsg != null)
+		{
 			SendSubscriptionResult(lookupMsg);
+		}
 	}
 
 	private void ProcessOrderExecution(ProtoOAExecutionEvent execution)

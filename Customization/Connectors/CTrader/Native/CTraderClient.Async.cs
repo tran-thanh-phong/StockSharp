@@ -79,6 +79,7 @@ partial class CTraderClient
 					this.AddInfoLog("Received account list with {0} accounts", accountListRes.CtidTraderAccount.Count);
 					accountListTcs.TrySetResult(accountListRes);
 				}
+
 				AccountsReceived?.Invoke(accountListRes);
 				break;
 
